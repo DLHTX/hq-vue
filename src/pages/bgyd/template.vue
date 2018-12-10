@@ -187,6 +187,8 @@
 </template>
 
 <script>
+import auth from '../../api/auth'
+
 export default {
     name: 'Bgyd',
     data (){
@@ -200,7 +202,7 @@ export default {
             }
         },
         created(){
-
+            auth.test()
         },
         methods:{
             changeType(index){

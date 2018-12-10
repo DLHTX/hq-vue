@@ -64,11 +64,11 @@ const router =  new Router({
   routes: [
     {
       path: '/',
-      component: () => import('@/pages/cygl/template.vue')
+      component: () => import('@/pages/login/template.vue')
     },
     {
-      path: '/bgyd',
-      component: () => import('@/pages/bgyd/template.vue')
+      path: '/index',
+      component: () => import('@/pages/index/template.vue')
     }
   ]
 })

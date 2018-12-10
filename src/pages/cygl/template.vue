@@ -10,7 +10,7 @@
             <div class="screen-search">
                 <div class="screen">
                     <span>筛选</span>
-                    <ul class="screen-ul">
+                    <ul class="screen-ul" style="font-family:'微软雅黑';">
                         <li class="active"><a href="#">全部</a></li>
                         <li><a href="#">小炒</a></li>
                         <li><a href="#">干锅</a></li>
@@ -26,17 +26,16 @@
                     <input type="text" placeholder="搜索" id="search">
                 </div>
             </div>
-
-                <div class="cuisine">
-                    <div class="cuisine-box">
+                <waterfall class="cuisine" :line-gap="280" :watch="cuisineList">
+                    <waterfall-slot class="cuisine-box" v-for='(item,index) in cuisineList' :key='index' :width='250' :height='260' :order='index'>
                         <div class="cuisine-item">
                             <div class="cuisine-item-top">
                                 <img src="../../assets/img/cuisine1.png">
-                                <div class="trade-name">品名：xxxx</div>
+                                <div class="trade-name">品名：{{item.name}}</div>
                             </div>
                             <div class="cuisine-item-bottom">
                                 <div class="type-price"><span class="type">菜品类别：小炒</span><span class="price">¥20</span></div>
-                                <div class="introduce">简介：色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全</div>
+                                <div class="introduce">简介：{{item.jj}}</div>
                                 <div class="switch-div">
                                     <span>是否可预订</span>
                                     <div class="switch-wrap active">
@@ -45,108 +44,19 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="cuisine-box">
-                        <div class="cuisine-item">
-                            <div class="cuisine-item-top">
-                                <img src="../../assets/img/cuisine2.png">
-                                <div class="trade-name">品名：xxxx</div>
-                            </div>
-                            <div class="cuisine-item-bottom">
-                                <div class="type-price"><span class="type">菜品类别：小炒</span><span class="price">¥20</span></div>
-                                <div class="introduce">简介：色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全</div>
-                                <div class="switch-div">
-                                    <span>是否可预订</span>
-                                    <div class="switch-wrap inactive">
-                                        <span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cuisine-box">
-                        <div class="cuisine-item">
-                            <div class="cuisine-item-top">
-                                <img src="../../assets/img/cuisine3.png">
-                                <div class="trade-name">品名：xxxx</div>
-                            </div>
-                            <div class="cuisine-item-bottom">
-                                <div class="type-price"><span class="type">菜品类别：小炒</span><span class="price">¥20</span></div>
-                                <div class="introduce">简介：色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全</div>
-                                <div class="switch-div">
-                                    <span>是否可预订</span>
-                                    <div class="switch-wrap inactive">
-                                        <span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cuisine-box">
-                        <div class="cuisine-item">
-                            <div class="cuisine-item-top">
-                                <img src="../../assets/img/cuisine4.png">
-                                <div class="trade-name">品名：xxxx</div>
-                            </div>
-                            <div class="cuisine-item-bottom">
-                                <div class="type-price"><span class="type">菜品类别：小炒</span><span class="price">¥20</span></div>
-                                <div class="introduce">简介：色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全</div>
-                                <div class="switch-div">
-                                    <span>是否可预订</span>
-                                    <div class="switch-wrap inactive">
-                                        <span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cuisine-box">
-                        <div class="cuisine-item">
-                            <div class="cuisine-item-top">
-                                <img src="../../assets/img/cuisine5.png">
-                                <div class="trade-name">品名：xxxx</div>
-                            </div>
-                            <div class="cuisine-item-bottom">
-                                <div class="type-price"><span class="type">菜品类别：小炒</span><span class="price">¥20</span></div>
-                                <div class="introduce">简介：色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全</div>
-                                <div class="switch-div">
-                                    <span>是否可预订</span>
-                                    <div class="switch-wrap inactive">
-                                        <span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cuisine-box">
-                        <div class="cuisine-item">
-                            <div class="cuisine-item-top">
-                                <img src="../../assets/img/cuisine6.png">
-                                <div class="trade-name">品名：xxxx</div>
-                            </div>
-                            <div class="cuisine-item-bottom">
-                                <div class="type-price"><span class="type">菜品类别：小炒</span><span class="price">¥20</span></div>
-                                <div class="introduce">简介：色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全色香味俱全</div>
-                                <div class="switch-div">
-                                    <span>是否可预订</span>
-                                    <div class="switch-wrap inactive">
-                                        <span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cuisine-box">
+                    </waterfall-slot>
+                    <!-- <waterfall-slot class="cuisine-box">
                         <div class="cuisine-item">
                             <a href="#" class="cptj"><img src="../../assets/img/cptj.png" width="100%" height="100%"></a>
                         </div>
-                    </div>
-                </div>
+                    </waterfall-slot> -->
+                </waterfall>
 
                 <div class="bottom-ope clearfix">
                     <div class="left-btn">
                         <input type="checkbox" class="allCheckbox">
                         <span>全选</span>
+                        <button class="btn btn-tjcp">添加菜品</button>
                         <button class="btn btn-cpdr">菜品导入</button>
                         <button class="btn btn-tpdr">图片导入</button>
                         <button class="btn btn-sc">删除</button>
@@ -278,8 +188,17 @@
 
 <script src="./template.js"></script>
 <script>
+import auth from '../../api/auth'
+import { mapGetters, mapActions } from 'vuex'
+import Waterfall from 'vue-waterfall/lib/waterfall'
+import WaterfallSlot from 'vue-waterfall/lib/waterfall-slot'
+
 export default {
     name: 'Cygl',
+    components: {
+        Waterfall,
+        WaterfallSlot
+    },
     data (){
         return{
          	menuName:[
@@ -287,13 +206,59 @@ export default {
 			'包厢预订',
 			'场地预订'
             ],
-            menuIndex:0
+            menuIndex:0,
+            cuisineList:[
+                {
+                    'name':'蒸羊羔',
+                    'jj':''
+                },
+                {
+                    'name':'烧花鸭',
+                    'jj':'江米酿鸭子江米酿鸭子子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子'
+                },
+                {
+                    'name':'江米酿鸭子',
+                     'jj':''
+                },
+                {
+                    'name':'清蒸八宝粥',
+                     'jj':'江米酿鸭江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子'
+                },
+                  {
+                    'name':'清蒸八宝粥',
+                     'jj':'江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子'
+                },
+                  {
+                    'name':'清蒸八宝粥',
+                     'jj':'江米酿鸭子江米酿鸭子江米酿鸭江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子'
+                },
+                  {
+                    'name':'清蒸八宝粥',
+                     'jj':'江米酿鸭米米酿鸭子江米酿鸭子'
+                },
+                  {
+                    'name':'清蒸八宝粥',
+                     'jj':'江米酿鸭子江米酿鸭子江米子江米酿鸭子江米酿鸭子江米酿鸭子'
+                },
+                     {
+                    'name':'清蒸八宝粥',
+                     'jj':'江米酿鸭子江米酿鸭子江米子江米酿鸭子江米酿鸭子江米酿鸭子'
+                },
+                     {
+                    'name':'清蒸八宝粥',
+                     'jj':'江米酿鸭子江米酿鸭子江米子江米酿鸭子江米酿鸭子江米酿鸭子'
+                },
+     
+            ]
         }
     },
-     created(){
-
+    created(){
     },
     methods:{
+        ...mapActions([
+            'getGrxx',
+            'login'
+        ]),
         changeType(index){
             this.menuIndex = index
         }
@@ -309,3 +274,8 @@ export default {
 
 
 <style scoped lang="less" src="./template.less"></style>
+<style>
+.screen .screen-ul a{
+    font-family: '微软雅黑';
+}
+</style>

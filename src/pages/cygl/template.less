@@ -1,25 +1,29 @@
 @import "../../assets/common.less";
 /*content*/
 /**餐饮预订*/
+*{
+    font-family: BMYH;
+}
 .second-menu{background: white;overflow: hidden;width:100%;}
 .second-menu>ul{margin-top:20px;height: 42px;line-height: 42px;margin-left:12px;}
-.second-menu>ul>li{float:left;width:120px;text-align: center;cursor: pointer;background: white;margin: 0 8px;border-radius: 6px 6px 0 0;}
-.second-menu>ul>li.active,.second-menu>ul>li:hover{background: #ebf1fe;}
+.second-menu>ul>li{float:left;width:120px;text-align: center;cursor: pointer;background: white;margin: 0 8px;border-radius: 6px 6px 0 0;transition:all .3s;}
+.second-menu>ul>li.active,.second-menu>ul>li:hover{background: #ebf1fe;transition:all .3s;}
 .section{padding:15px 20px 0 20px;position: relative;height:90%;}
 .screen-search{border-bottom:1px solid #77a6fe;padding-bottom:10px;margin-bottom:20px;overflow: hidden;}
 .screen-search>.screen{float:left;line-height: 30px;}
 .screen-search>.screen>span{margin:0 16px 0 30px;float:left;}
 .screen-search>.screen>ul{float: left;}
 .screen-search>.screen>ul>li{float: left;}
-.screen-search>.screen>ul>li>a{display: block;padding:0 20px;border-radius: 20px;font-size: 14px;color: #333333;margin: 0 2px;}
-.screen-search>.screen>ul>li.active>a,.screen-search>.screen>ul>li>a:hover{background-color:#77a6fe;color: white;}
+.screen-search>.screen>ul>li>a{display: block;padding:0 20px;border-radius: 20px;font-size: 14px;color: #333333;margin: 0 2px;transition:all .3s;}
+.screen-search>.screen>ul>li.active>a,.screen-search>.screen>ul>li>a:hover{background-color:#77a6fe;color: white;transition:all .3s;}
 .search-group{float: right;border:1px solid #77a6fe;line-height: 32px;border-radius: 20px;height: 32px;}
 .search-group>.search-group-addon{background:#77a6fe;padding: 0 15px;display: inline-block;border-radius: 20px 0 0 20px;}
 .search-group>input{border:none;height: 30px;border-radius: 0 20px 20px 0;background: transparent;text-align: center;}
 
 .cuisine{margin-left:-10px;margin-right:-10px;}
 .cuisine>.cuisine-box{float: left;width: 20%;padding-right: 10px;padding-left: 10px;box-sizing: border-box;margin-bottom: 20px;}
-.cuisine>.cuisine-box>.cuisine-item{box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);border-radius: 5px;}
+.cuisine>.cuisine-box>.cuisine-item:hover{box-shadow:0 1px 30px rgba(119, 166, 254, 0.8);transition:all .3s;}
+.cuisine>.cuisine-box>.cuisine-item{box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);border-radius: 5px;transition:all .3s;}
 .cuisine-item-top{position: relative;}
 .cuisine-item-top>img{width:100%;}
 .cuisine-item-top>.trade-name{position: absolute;bottom: 0;left:0;right:0;background: rgba(255,255,255,0.5);padding:5px 10px;text-overflow:ellipsis;overflow: hidden;white-space: nowrap;}
@@ -36,9 +40,10 @@
 
 .bottom-ope{position: absolute;bottom: 0px;right: 20px;background: white;height: 44px;line-height: 44px;padding:0 30px;box-sizing: border-box;box-shadow: 0 0 8px 1px rgba(0,0,0,0.1);left: 20px;}
 .bottom-ope>.left-btn{float: left;}
-.bottom-ope>.left-btn>.allCheckbox{}
+// .bottom-ope>.left-btn>.allCheckbox{}
 .bottom-ope>.left-btn>span{margin:0 20px;color:#77a6fe; }
 .bottom-ope>.left-btn>.btn{width:80px;height: 26px;line-height: 26px;font-size: 15px;}
+.bottom-ope>.left-btn>.btn-tjcp{background: #4053e4;}
 .bottom-ope>.left-btn>.btn-cpdr{background: #77a6fe;}
 .bottom-ope>.left-btn>.btn-tpdr{background: #ab9fff;}
 .bottom-ope>.left-btn>.btn-sc{background: #ff4f4f;}
@@ -52,8 +57,8 @@
 .change-date>.screen>ul>li>a{border-radius: 4px;padding:2px 10px;}
 .change-date ul>li>a>span{display: block;text-align: center;}
 .change-date .search-group{ border-color: transparent;border-radius: 4px;}
-.change-date .search-group>.btn{height: 100%;color: #b0aeae;border: 1px solid #b0aeae;padding: 0 10px;border-radius: 0;margin-top: 1px;}
-.change-date .search-group>.btn:hover{border: 1px solid #77a6fe;color:#77a6fe;}
+.change-date .search-group>.btn{height: 100%;color: #b0aeae;border: 1px solid #b0aeae;padding: 0 10px;border-radius: 0;margin-top: 1px;transition:all .3s;}
+.change-date .search-group>.btn:hover{border: 1px solid #77a6fe;color:#77a6fe;transition:all .3s;}
 .change-date .search-group>span{display: inline-block;background: #77a6fe;color: white;padding: 0 30px;}
 .change-date>.screen>span{line-height: 42px;}
 
