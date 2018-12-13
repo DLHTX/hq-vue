@@ -6,36 +6,34 @@
                 </ul>
             </div>
             <!--section1-->
-            <div class="section section1 clearfix" v-if='menuIndex===0'>
+            <div class="section section1 clearfix" v-if='menuIndex===0' 
+            v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)">
             <div class="screen-search">
                 <div class="screen">
                     <span>筛选</span>
                     <ul class="screen-ul" style="font-family:'微软雅黑';">
-                        <li class="active"><a href="#">全部</a></li>
-                        <li><a href="#">小炒</a></li>
-                        <li><a href="#">干锅</a></li>
-                        <li><a href="#">汤羹</a></li>
-                        <li><a href="#">凉菜</a></li>
-                        <li><a href="#">特色小吃</a></li>
-                        <li><a href="#">米粉面点</a></li>
-                        <li><a href="#">精美点心</a></li>
+                        <li :class="{true:'active'}[cplbIndex===-1]" @click='searchAll()'><a href="javascript:void(0)">全部</a></li>
+                        <li v-for='(cuisineLb,index) in cuisineLbList' :key="index"  @click="searchLb(cuisineLb.id,index)" :class="{true:'active'}[cplbIndex===index]"><a href="javascript:void(0)">{{cuisineLb.mc}}</a></li>
                     </ul>
                 </div>
                 <div class="search-group">
-                    <span class="search-group-addon"><img src="../../assets/img/search.png"></span>
-                    <input type="text" placeholder="搜索" id="search">
+                    <span class="search-group-addon" @click='searchCp(input)'><img src="../../assets/img/search.png"></span>
+                    <input type="text" placeholder="搜索" id="search" v-model="input">
+                    <!-- <el-input id="search" placeholder="请输入内容" v-model="input" clearable></el-input> -->
+
                 </div>
             </div>
-                <waterfall class="cuisine" :line-gap="280" :watch="cuisineList">
+                <waterfall class="cuisine" :line-gap="280" :watch="cuisineList" style="overflow: scroll;height: 700px;"  >
                     <waterfall-slot class="cuisine-box" v-for='(item,index) in cuisineList' :key='index' :width='250' :height='260' :order='index'>
                         <div class="cuisine-item">
                             <div class="cuisine-item-top">
-                                <img src="../../assets/img/cuisine1.png">
-                                <div class="trade-name">品名：{{item.name}}</div>
+                                <!-- <img src="../../assets/img/cuisine1.png"> -->
+                                <AliImage :keys='item.tp' :type="imgValue.type" :sys='imgValue.sys' style="border-radius: 6px 6px 0 0;" > </AliImage>
+                                <div class="trade-name">品名：{{item.mc}}</div>
                             </div>
                             <div class="cuisine-item-bottom">
                                 <div class="type-price"><span class="type">菜品类别：小炒</span><span class="price">¥20</span></div>
-                                <div class="introduce">简介：{{item.jj}}</div>
+                                <div class="introduce" v-if='item.bz'>简介:{{item.bz}}</div>
                                 <div class="switch-div">
                                     <span>是否可预订</span>
                                     <div class="switch-wrap active">
@@ -56,21 +54,23 @@
                     <div class="left-btn">
                         <input type="checkbox" class="allCheckbox">
                         <span>全选</span>
-                        <button class="btn btn-tjcp">添加菜品</button>
+                        <button class="btn btn-tjcp" @click="addCp()">添加菜品</button>
                         <button class="btn btn-cpdr">菜品导入</button>
                         <button class="btn btn-tpdr">图片导入</button>
                         <button class="btn btn-sc">删除</button>
                     </div>
-                    <ul class="paging">
-                        <li><a href="javascript:void(0)">2/10</a></li>
-                        <li><a href="javascript:void(0)">上一页</a></li>
-                        <li><a href="javascript:void(0)">1</a></li>
-                        <li><a href="javascript:void(0)">2</a></li>
-                        <li><a href="javascript:void(0)">3</a></li>
-                        <li><a href="javascript:void(0)">4</a></li>
-                        <li><a href="javascript:void(0)">5</a></li>
-                        <li><a href="javascript:void(0)">下5页</a></li>
-                        <li><a href="javascript:void(0)">下一页</a></li>
+                    <ul class="paging" style="position: absolute;right: 20px;top: 50%;transform: translateY(-14px);">
+                        <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page.sync="currentPage"
+                        background
+                        
+                        :page-size="rows"
+                        :page-sizes="[10, 15, 20, 25]"
+                        layout="sizes,total,prev, pager, next, jumper"
+                        :total="total">
+                        </el-pagination>
                     </ul>
                 </div>
             </div>
@@ -177,27 +177,75 @@
             </div>
             <!--section3-->
             <div class="section section3 clearfix" v-if='menuIndex===2'>
-
+            
             </div>
+         <!--提示信息框-->
+            <div class="modal" id="modal" :class="{true:'modal-in'}[showModel]">
+                <div class="modal-title">
+                    <div class="title">编辑</div>
+                    <a href="javascript:void(0);" class="close" @click="modalClose()"><img src="../../assets/img/close.png"></a>
+                </div>
+                <div class="modal-content">
+                    <form id="form">
+                        <div class="input-group">
+                            <!-- <label class="control-label">价格</label>
+                            <input type="text" id="jg" name="jg" class="form-control">
+                            <label class="control-label">间数</label>
+                            <input type="text" id="js" name="js" class="form-control"> -->
+                            <el-upload
+                                :action="attachImg"
+                                :http-request='Upload'
+                                :on-success="handleSuccess"
+                                list-type="picture-card"
+                                :on-preview="handlePictureCardPreview"
+                                :multiple="false"
+                                :limit='1'
+                                :on-remove="handleRemove">
+                                <i class="el-icon-plus"></i>
+                            </el-upload>
+                            <el-dialog :visible.sync="dialogVisible">
+                                <img width="100%" :src="dialogImageUrl" alt="">
+                            </el-dialog>
+                        </div>
+                        <div class="input-group">
+                             <el-select v-model="cuisineLb" placeholder="请选择类别">
+                                <el-option
+                                v-for="item in cuisineLbList"
+                                :key="item.mc"
+                                :label="item.mc"
+                                :value="item.mc" style="padding-left: 10px;">
+                                </el-option>
+                            </el-select>
+                        </div>
+                        <button class="btn btn-makeSure" onclick="save(modal)">确定</button>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-backdrop" :class="{true:'modal-in modal-backdrop-active'}[showModel]"></div>
+        <!--提示信息框-->
         </div>
-    <!--提示信息框-->
-
-    <!--提示信息框-->
-
 </template>
 
 <script src="./template.js"></script>
 <script>
 import auth from '../../api/auth'
+import cygl from '../../api/cygl'
 import { mapGetters, mapActions } from 'vuex'
 import Waterfall from 'vue-waterfall/lib/waterfall'
 import WaterfallSlot from 'vue-waterfall/lib/waterfall-slot'
+import AliImage from '../../components/Image'
+import { setLocalStorage,isQuotaExceeded,getLocalStorage } from '../../helpers/locTime'
+import axios from 'axios'
+
 
 export default {
     name: 'Cygl',
+    props:['currentTreenode'],
     components: {
         Waterfall,
-        WaterfallSlot
+        WaterfallSlot,
+        AliImage,
+        
     },
     data (){
         return{
@@ -207,61 +255,116 @@ export default {
 			'场地预订'
             ],
             menuIndex:0,
-            cuisineList:[
-                {
-                    'name':'蒸羊羔',
-                    'jj':''
-                },
-                {
-                    'name':'烧花鸭',
-                    'jj':'江米酿鸭子江米酿鸭子子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子'
-                },
-                {
-                    'name':'江米酿鸭子',
-                     'jj':''
-                },
-                {
-                    'name':'清蒸八宝粥',
-                     'jj':'江米酿鸭江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子'
-                },
-                  {
-                    'name':'清蒸八宝粥',
-                     'jj':'江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子'
-                },
-                  {
-                    'name':'清蒸八宝粥',
-                     'jj':'江米酿鸭子江米酿鸭子江米酿鸭江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子江米酿鸭子'
-                },
-                  {
-                    'name':'清蒸八宝粥',
-                     'jj':'江米酿鸭米米酿鸭子江米酿鸭子'
-                },
-                  {
-                    'name':'清蒸八宝粥',
-                     'jj':'江米酿鸭子江米酿鸭子江米子江米酿鸭子江米酿鸭子江米酿鸭子'
-                },
-                     {
-                    'name':'清蒸八宝粥',
-                     'jj':'江米酿鸭子江米酿鸭子江米子江米酿鸭子江米酿鸭子江米酿鸭子'
-                },
-                     {
-                    'name':'清蒸八宝粥',
-                     'jj':'江米酿鸭子江米酿鸭子江米子江米酿鸭子江米酿鸭子江米酿鸭子'
-                },
-     
-            ]
+            shopList: this.$parent.shopList,
+            cplbIndex:-1,
+            cuisineList:[],
+            cuisineLbList:[],
+            cuisineLb:'',
+            Treenode:this.currentTreenode,
+            imgValue:{
+                // 'key':'201810191458471539932327320s',
+                'type':'stcp',
+                'sys':'xydc'
+            },
+            currentPage:1,
+            rows:10,
+            total:null,
+            loading:true,
+            input:'',
+            showModel:false,
+            dialogImageUrl: '',
+            dialogVisible: false,
+            attachImg:'/xydc/app/common/attachmentUpload'
         }
     },
     created(){
+        this.onGetList()
+        console.log(this.Treenode)
     },
     methods:{
         ...mapActions([
             'getGrxx',
             'login'
         ]),
+        handleSuccess(res, file){
+            console.log(res,file)
+        },
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
+        },
+        handlePictureCardPreview(file) {
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
+        },
+        Upload(file){
+            console.log(file)
+            var param = new FormData()
+            param.append("myfiles", file.file)
+            cygl.uploadImg(param)
+            // var reader = new FileReader();
+            // reader.readAsDataURL(file.file);
+            // function readerOn(){
+            //     return new Promise((resolve,reject)=>{
+            //         reader.onload = function(e){
+            //             resolve(this.result)
+            //         }
+            //     })
+            // }
+            // readerOn().then(res=>{
+            //     console.log(res)
+            //     cygl.uploadImg(res,'xydc','stcp')
+            // })
+        },
+        addCp(){
+            this.showModel = true
+        },
+        modalClose(){
+            this.showModel = false
+        },
         changeType(index){
             this.menuIndex = index
-        }
+        },
+        onGetList(treeNode=this.currentTreenode,cplbId=null,mc=null){
+            this.loading = true
+            cygl.getList(this.currentPage,this.rows,treeNode,cplbId,mc).then(res=>{
+                this.cuisineList = res.data.cbList    //菜品list
+                if(this.currentPage === 1){
+                    this.cuisineLbList = res.data.lbList //分类
+                }
+                this.total = res.data.total //总数
+                this.loading = false //载入动画
+            })
+        },
+        searchLb(cplbId,index){
+            this.loading = true
+            //存在每次查完仍然有菜品类别 所以要重新写cygl.getList
+            cygl.getList(this.currentPage,this.rows,this.currentTreenode,cplbId).then(res=>{
+                this.cuisineList = res.data.cbList //菜品list
+                this.total = res.data.total
+                this.loading = false
+            })
+            this.cplbIndex = index
+        },
+        searchCp(val){
+            if(!val){
+                this.$message.error('输入内容不可为空')
+            }else{
+                this.onGetList(this.currentTreenode,null,val)
+            }
+        },
+        searchAll(){
+            this.loading = true
+            this.cplbIndex = -1
+            this.onGetList()
+        },
+        handleSizeChange(val) {
+            this.rows = val
+            this.onGetList()
+        },
+        handleCurrentChange(val) {
+            this.onGetList()
+        },
+     
     },
     computed:{
 
@@ -274,8 +377,19 @@ export default {
 
 
 <style scoped lang="less" src="./template.less"></style>
-<style>
+<style lang="less" scoped>
 .screen .screen-ul a{
     font-family: '微软雅黑';
 }
+.el-upload-list__item-actions {
+    .el-upload-list__item-preview i{
+        display: none;
+    }
+    .el-upload-list__item-delete {
+        position: absolute; 
+        left: 0;
+        top: 57px;
+    }
+}
+
 </style>

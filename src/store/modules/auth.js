@@ -2,7 +2,8 @@ import auth from '@/api/auth'
 import { Message } from 'element-ui'
 import { rejects } from 'assert';
 import { resolve } from 'url';
-
+import Cookie from 'js-cookie'
+import { setLocalStorage,isQuotaExceeded,getLocalStorage } from '../../helpers/locTime'
 const state = {
   user: null,
   isLogin: false
@@ -32,7 +33,14 @@ const actions = {
             let _token = JSON.parse(localStorage.getItem('_token'))
             delete _token.password
             _token.loginInfo = res.data.loginInfo
-            localStorage.setItem('token',encodeURIComponent(JSON.stringify(_token)) )
+            setLocalStorage('token',encodeURIComponent(JSON.stringify(_token)))
+            setLocalStorage('permissions',JSON.stringify(res.data.permissions))
+            // localStorage.setItem()
+            // setTimeout(()=>{
+            //     console.log('执行清除token 函数')   
+            //     localStorage.removeItem('token')
+            //     commit('setLogin',{ isLogin: false })
+            // },10000)
         },err=>{
             console.log('用户名或者密码错误')
         }).catch(err=>{
@@ -57,6 +65,14 @@ const actions = {
         localStorage.removeItem('token')
         commit('setLogin',{isLogin:false})
         commit('setUser',{user:null})
+    },
+    getPermissions({commit},auth){
+        // console.log(JSON.parse(getLocalStorage('permissions')))
+        if((JSON.parse(getLocalStorage('permissions')).indexOf(auth)) >= 0){
+            return true
+        }else{
+            return false
+        }
     }
 
 

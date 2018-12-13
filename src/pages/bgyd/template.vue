@@ -6,7 +6,8 @@
             </ul>
         </div>
         <!--section1-->
-        <div class="section section1 clearfix" v-if='menuIndex===0'>
+        <div class="section section1 clearfix" v-if='menuIndex===0'
+        v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)">
             <div class="left">
                 <div class="screen-search change-date">
                     <div class="screen">
@@ -198,11 +199,12 @@ export default {
                 '预定管理'
                 ],
                 menuIndex:0,
-                showModel:false
+                showModel:false,
+                loading:true
             }
         },
         created(){
-            auth.test()
+            // auth.test()
         },
         methods:{
             changeType(index){

@@ -6,19 +6,36 @@
 
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
   name: 'App',
   data(){
 	return{
-	
+        
 	}
   },
-  created(){
-
+  mounted(){
+      this.checkLogin()
   },
   methods:{
+    ...mapActions([
+        'getGrxx',
+        'getPermissions'
+    ]),
+    checkLogin(){
+        if(localStorage.getItem('token')){
+            if(!this.user){
+                this.getGrxx()//获取user信息
+            }
+        }
+    }
   },
   computed:{
+    ...mapGetters([
+        'isLogin',
+        'user',
+    ]),
   }
 }
 </script>

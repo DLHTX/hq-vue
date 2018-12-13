@@ -1,14 +1,19 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import querystring from 'querystring' //序列化请求参数
+import { setLocalStorage,isQuotaExceeded,getLocalStorage } from './locTime'
 
-console.log(localStorage.getItem("token"))
+
+// console.log(getLocalStorage("token"))
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-axios.defaults.baseURL = 'http://b6pzsi.natappfree.cc/'
+axios.defaults.baseURL = 'http://dd67bd.natappfree.cc/'
 axios.defaults.withCredentials = true
-if(localStorage.getItem("token")){
-    console.log(localStorage.getItem("token"))
-    axios.defaults.headers.common["_token"] = localStorage.getItem("token")
+
+let token = getLocalStorage("token")
+console.log(token)
+if(getLocalStorage("token")){
+    console.log(token)
+    axios.defaults.headers.common["_token"] = getLocalStorage("token")
 }else{
     console.log('没有token')
 }
@@ -19,8 +24,8 @@ export default function request(url, type = 'GET', data = {}) {
       url,
       method: type
     }
-    if(localStorage.getItem("token")){
-        option.url = url + '?_token=' + localStorage.getItem("token")
+    if(getLocalStorage("token")){
+        option.url = url + '?_token=' + getLocalStorage("token")
     }
 
     if(type.toLowerCase() === 'get') {

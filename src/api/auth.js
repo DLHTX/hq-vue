@@ -1,10 +1,11 @@
+/*处理登录用户权限的页面*/
 import request from '@/helpers/request'
-import { JSEncrypt } from 'jsencrypt'
+import { JSEncrypt } from 'jsencrypt' //RSA加密传输
 import querystring from 'querystring' //序列化请求参数
 import { format } from 'util';
 
 const publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC1IbY7yNTPlF/lJtYwP7R3o/t+/hgjgl5vUBlSKx1smWhxg93kffLvezB9N8e7c3fADfHRqimi+/8WLXkYfAmQcDrfvXWg3ngsDH8gxxzw8+n6KQqTCeDpJsgqFnk6HIOBgbDlz8yIA7y910SGr4/LAd4nxtr7lpSw2px40kRRWQIDAQAB";
-const systemType = '@b6pzsi' 
+const systemType = '@dd67bd' 
 let encrypt = new JSEncrypt();
 encrypt.setPublicKey(publicKey);
 

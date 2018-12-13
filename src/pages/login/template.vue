@@ -21,6 +21,7 @@ export default {
     created (){
         this.checkLogin()
         this.onCheckLogin()
+        //this.$router.push({path: this.$route.query.redirect || '/index'})
     },
     methods:{
         ...mapActions([

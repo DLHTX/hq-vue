@@ -18,51 +18,9 @@ window.store = store;
 
 Vue.use(Router);
 
-/*
-const router = new Router({
-  routes: [
-    {
-      path: '/',
-      component: Index
-    },
-    {
-      path: '/login',
-      component: Login
-    },
-    {
-      path: '/register',
-      component: Register
-    },
-    {
-      path: '/detail/:blogId',
-      component: Detail
-    },
-    {
-      path: '/edit/:blogId',
-      component: Edit,
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/create',
-      component: Create,
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/user/:userId',
-      component: User
-    },
-    {
-      path: '/my',
-      component: My,
-      meta: { requiresAuth: true }
-    }
-  ]
-})
-*/
-
 const router =  new Router({
   routes: [
-    {
+    {     
       path: '/',
       component: () => import('@/pages/login/template.vue')
     },

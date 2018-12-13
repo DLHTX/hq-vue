@@ -1,5 +1,6 @@
 <template>
   <div id="app" v-if='user'>
+<!-- <div id="app" > -->
     <el-container style="height:100%">
         <el-header style="height: 55px;line-height: 55px;">
             <a href="#" class="logo">
@@ -10,21 +11,39 @@
                 <li><a href="#"><img src="../../assets/img/alarm.png"><span class="badge">15</span></a></li>
                 <li @click='onLogout' v-if='user.xb==="男"'><a href="#"><img src="../../assets/img/head_portrait_boy.png" style="height: 28px;">{{user.xm}}</a></li>
                 <li @click='onLogout' v-if='user.xb==="女"'><a href="#"><img src="../../assets/img/head_portrait_gril.png" style="height: 28px;">{{user.xm}}</a></li>
-                <li><a href="#"><img src="../../assets/img/switch.png">门店切换</a></li>
+                <!-- <li><a href="#"><img src="../../assets/img/switch.png">门店切换</a></li> -->
+                <el-dropdown  v-if="menuNameIndex=='餐饮管理'">
+                    <el-button type="primary" style="background-color: transparent;border: none;">
+                        <img src="../../assets/img/switch.png">  门店切换
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native='onGetList(shop.id)' v-for="shop in shopList" :key='shop.name' v-if="shopList">{{shop.name}}</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+
+                <el-dropdown  v-if="menuNameIndex=='宾馆预订'">
+                    <el-button type="primary" style="background-color: transparent;border: none;">
+                        <img src="../../assets/img/switch.png">  门店切换
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-for="hotel in hotelList" :key='hotel.name' v-if="hotelList">{{hotel.name}}</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+
             </ul>
         </el-header>
         <el-container>
             <el-aside style="width: 130px;">
                 <ul class="menu">
-                    <li v-for='(name,index) in menuName' :key="name" @click='changeType(index)' :class='{true:"active"}[menuIndex===index]'><a href="javascript:void(0);">{{name}}</a></li>
+                    <li v-for='(name,index) in menuName' :key="name" @click='changeType(index,name)' :class='{true:"active"}[menuIndex===index]'><a href="javascript:void(0);">{{name}}</a></li>
                     <!-- <li>宾馆预订</li>
                     <li>消费记录</li> -->
                 </ul>
             </el-aside>
             <el-main>
-                <Cygl v-if="menuIndex==0"></Cygl>
-                <Bgyd v-if="menuIndex==1"></Bgyd>
-                <Xfjl v-if="menuIndex==2"></Xfjl>
+                <Cygl v-if="menuNameIndex=='餐饮管理'" ref='onGetList' :currentTreenode='currentTreenode'></Cygl>
+                <Bgyd v-if="menuNameIndex=='宾馆预订'"></Bgyd>
+                <Xfjl v-if="menuNameIndex=='消费记录'"></Xfjl>
             </el-main>
         </el-container>
     </el-container>
@@ -39,6 +58,7 @@ import Cygl from '../cygl/template.vue';
 import Xfjl from '../xfjl/template.vue';
 import tipModel from '../../components/tip-model/tip-model.vue';
 import { mapGetters, mapActions } from 'vuex';
+
 export default {
   name: 'index',
   components: {
@@ -50,12 +70,24 @@ export default {
   data(){
 	return{
 		menuName:[
-			'餐饮管理',
-			'宾馆预订',
+			// '餐饮管理',
+			// '宾馆预订',
 			'消费记录'
-		],
+        ],
         menuIndex:0,
-        showTipModel:false
+        menuNameIndex:'',
+        showTipModel:false,
+        shopList:[],
+        currentTreenode:null,
+        hotelList:[],
+        shopAuthList:[
+            {'name':'东苑餐厅','id':1,'auth':'dyct:1'},
+            {'name':'西苑餐厅','id':2,'auth':'xyct:2'},
+            // {'name':'翠屏苑','id':1,'auth':'cpy:1'},
+            // {'name':'翠屏苑','id':1,'auth':'cpy:1'},
+            // {'name':'翠屏苑','id':1,'auth':'cpy:1'},
+        ],
+        hotelAuthList:[{'name':'御园宾馆','id':19,'auth':'yybg:19'},]
 	}
   },
   created(){
@@ -65,15 +97,46 @@ export default {
         ...mapActions([
             'getGrxx',
             'checkLogin',
-            'logout'
+            'logout',
+            'getPermissions'
         ]),
+     
         onCheckLogin(){//判断登录状态
             if(!this.isLogin){
                 this.$router.push({path: this.$route.query.redirect || '/'})
+            }else{
+                this.checkPermissions()
             }
         },
-        changeType(index){
+        checkPermissions(){
+            this.shopAuthList.forEach(item=>{
+                this.getPermissions(item.auth).then(res=>{
+                    if(res){
+                        this.shopList.push(item)
+                    }
+                })//查询餐厅权限
+            })
+            this.hotelAuthList.forEach(item=>{
+                this.getPermissions(item.auth).then(res=>{
+                    if(res){
+                        this.hotelList.push(item)
+                    }
+                })//查询宾馆权限
+            })
+            if(!(this.shopList===[])){
+                this.menuName.unshift('餐饮管理') //配置第一模块权限
+                setTimeout(()=>{
+                    this.currentTreenode = this.shopList[0].id
+                },300)
+                
+            }
+            if(!(this.hotelList===[])){
+                this.menuName.unshift('宾馆预订')
+            }
+        },
+        changeType(index,name){
             this.menuIndex = index
+            this.menuNameIndex = name
         },
         newMessage(data){
             if(this.showTipModel){this.showTipModel = false}else{
@@ -85,7 +148,13 @@ export default {
             this.logout()
               this.$message({message: '注销成功!',type: 'success'});
             this.$router.push({path: this.$route.query.redirect || '/'})
-        }
+        },
+        onGetList(treeNode) {
+            console.log(treeNode)
+            this.currentTreenode = treeNode
+            this.$refs.onGetList.onGetList(this.currentTreenode)
+        },
+    
   },
   computed:{
       ...mapGetters([
@@ -113,5 +182,14 @@ body > .el-container {
     top: 753px!important;
     left: 20px!important;
     transition: all .5s;
+}
+.el-dropdown {
+    vertical-align: top;
+}
+.el-dropdown + .el-dropdown {
+    margin-left: 15px;
+}
+.el-icon-arrow-down {
+    font-size: 12px;
 }
 </style>
