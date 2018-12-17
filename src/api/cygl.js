@@ -10,7 +10,7 @@ const URL = {
   GET_DETAIL: '/blog/:blogId',
   CREATE: '/blog',
   UPLOADIMG: 'xydc/app/stct/filesUpload',
-  DELETE: '/blog/:blogId'
+  SAVE: 'xydc/app/stct/save'
 }
 
 export default {
@@ -19,6 +19,9 @@ export default {
   },
   uploadImg(myfiles) {
     return request(URL.UPLOADIMG, 'POST', myfiles)
+  },
+  save(form) {
+    return request(URL.SAVE, 'POST', formatData(form))
   },
   // getIndexBlogs({ page=1 } = { page: 1}) {
   //   return this.getBlogs({ page, atIndex: true })

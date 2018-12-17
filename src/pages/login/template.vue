@@ -9,13 +9,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 
+
 export default {
     name:'login',
     data(){
         return{
             username:'',
             password:'',
-            fullscreenLoading :false
+            fullscreenLoading :false,
         }
     },
     created (){
@@ -50,6 +51,7 @@ export default {
                 }
             })
         },
+        
     },
     computed:{
         ...mapGetters([
@@ -59,3 +61,9 @@ export default {
     }
 }
 </script>
+
+<style>
+.data span{
+   background-color: #a5a5a5;
+}
+</style>

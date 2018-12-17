@@ -87,7 +87,7 @@ export default {
             // {'name':'翠屏苑','id':1,'auth':'cpy:1'},
             // {'name':'翠屏苑','id':1,'auth':'cpy:1'},
         ],
-        hotelAuthList:[{'name':'御园宾馆','id':19,'auth':'yybg:19'},]
+        hotelAuthList:[{'name':'御园宾馆','id':19,'auth':'yybg:19'},]   
 	}
   },
   created(){
@@ -110,6 +110,7 @@ export default {
         },
         checkPermissions(){
             this.shopAuthList.forEach(item=>{
+                //mapActions中获取权限
                 this.getPermissions(item.auth).then(res=>{
                     if(res){
                         this.shopList.push(item)
@@ -131,7 +132,7 @@ export default {
                 
             }
             if(!(this.hotelList===[])){
-                this.menuName.unshift('宾馆预订')
+                this.menuName.unshift('宾馆预订') //配置第二模块权限
             }
         },
         changeType(index,name){
