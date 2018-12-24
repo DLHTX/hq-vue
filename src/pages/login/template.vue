@@ -1,13 +1,44 @@
 <template>
-<div>
-    <input type="text" placeholder="用户名" v-model="username">
-    <input type="password" placeholder="密码" v-model="password">
-    <button @click='onLogin()'  v-loading.fullscreen.lock="fullscreenLoading">登录</button>
+<div style="height: 100%;" :style="fontStyle">
+    <div class="navbar">
+		<nav class="nav__mobile"></nav>
+		<el-header style="height: 55px;line-height: 55px;">
+            <a href="#" class="logo">
+                <img src="../../assets/img/logo.png">
+                <img src="../../assets/img/logo_text.png">
+            </a>
+        </el-header>
+	</div>
+	<!-- Authentication pages -->
+	<div class="auth">
+		<div class="container">
+			<div class="auth__inner">
+				<div class="auth__media">
+					<img src="../../assets/img/undraw_selfie.svg">
+				</div>
+				<div class="auth__auth">
+                    <el-color-picker v-model="fontStyle.background" size="mini" style="margin-bottom: 15px;"></el-color-picker>
+					<h1 class="auth__title" style="font-family: BMYH;" >南京航空航天大学后勤管理平台</h1>
+					<p style="font-family: BMYH;" >登录页面</p>
+					<div class="form">
+						<input class="fakefield">
+						<label >用户名</label>
+						<input type="text" autocomplete="on" placeholder="请输入用户名" v-model="username" name="email">
+						<label >密码</label>
+						<input type="password" placeholder="请输入密码"  v-model="password" >
+						<button class="button button__accent"  @click='onLogin()' v-loading.fullscreen.lock="fullscreenLoading" >登录</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+     <div class="bottom">Powered by Yumoo!  © 2012-2018 Yumoo Inc.</div>
 </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { setLocalStorage } from '../../helpers/locTime';
 
 
 export default {
@@ -17,6 +48,19 @@ export default {
             username:'',
             password:'',
             fullscreenLoading :false,
+            fontStyle:{
+                'background':'#ffffff'
+            }
+
+        }
+    },
+    watch:{
+        'fontStyle.background':{
+            handler(res){
+                console.log(res)
+                localStorage.setItem('color',res)
+            },
+            deep:true
         }
     },
     created (){
@@ -28,9 +72,12 @@ export default {
         ...mapActions([
             'getGrxx',
             'login',
-            'checkLogin'
+            'checkLogin',
         ]),
         onCheckLogin(){
+            if(localStorage.getItem('color')){
+                this.fontStyle.background = localStorage.getItem('color')
+            }//判断用户设置的背景色
             if(this.isLogin){
                 this.$router.push({path: this.$route.query.redirect || '/index'})
             }
@@ -56,14 +103,51 @@ export default {
     computed:{
         ...mapGetters([
             'isLogin',
-            'user'
-        ])
+            'user',
+        ]),
+        handerColor:()=>{
+
+        }
     }
 }
 </script>
 
+
+<style scoped lang="less" src="./template.less"></style>
 <style>
 .data span{
    background-color: #a5a5a5;
+}
+.auth__auth{
+    font-family: BMYH!important;
+}
+*{
+    -moz-user-select: none; 
+    -o-user-select:none; 
+    -khtml-user-select:none; 
+    -webkit-user-select:none; 
+    -ms-user-select:none; 
+    
+}
+input:-webkit-autofill {
+    background-color: #FAFFBD;
+    background-image: none;
+    -webkit-box-shadow: 0 0 0 1000px white inset;
+border: 1px solid #CCC!important;
+
+}
+input:-webkit-autofill:active {
+        -webkit-transition-delay: 99999s;
+        -webkit-transition: color 99999s ease-out, background-color 99999s ease-out;
+}
+.bottom{
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #dadada;
+    font-family: BMYH!important;
+    height: 28px;
+    line-height: 28px;
 }
 </style>

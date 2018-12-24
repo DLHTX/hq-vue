@@ -9,40 +9,18 @@
         <div class="section section1 clearfix" v-if='menuIndex===0'
         v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)">
             <div class="left">
-                <div class="screen-search change-date">
-                    <div class="screen">
-                        <span>日期</span>
-                        <ul class="screen-ul">
-                            <li class="active"><a href="#"><span>周一</span><span>2018-12-03</span></a></li>
-                            <li><a href="#"><span>周二</span><span>2018-12-04</span></a></li>
-                            <li><a href="#"><span>周三</span><span>2018-12-05</span></a></li>
-                            <li><a href="#"><span>周四</span><span>2018-12-06</span></a></li>
-                            <li><a href="#"><span>周五</span><span>2018-12-07</span></a></li>
-                            <li><a href="#"><span>周六</span><span>2018-12-08</span></a></li>
-                            <li><a href="#"><span>周日</span><span>2018-12-09</span></a></li>
-                        </ul>
-                    </div>
-                    <div class="search-group">
-                        <button class="btn btn-last-week"> 上一周</button><span>2018/12/03</span><button class="btn btn-next-week">下一周 > </button>
-                    </div>
-                </div>
+                <Date v-on:ycrqDate='getHotelList($event)'></Date>
                 <div class="room-list clearfix">
-                    <div class="room-item active">
+                    <div class="room-item active" v-for='(hotel,index) in hotelList' :key='index'>
                         <div class="real-room">
-                            <div class="room-type">标准房/双床 <button class="btn btn-delete">删除</button></div>
-                            <div class="money">RMB 300</div>
-                            <div class="population">6/8</div>
-                            <button class="btn room-have">有房</button>
+                            <div class="room-type">{{hotel.typ}} <button class="btn btn-delete">删除</button></div>
+                            <div class="money" style=" color: #fd6666;">RMB {{hotel.price}}</div>
+                            <div class="population">{{hotel.total-hotel.odd}}/{{hotel.total}}</div>
+                            <button class="btn room-have" v-if='!(hotel.odd === 0)'>有房</button>
+                            <button class="btn room-full"  v-if='hotel.odd === 0'>满房</button>
                         </div>
                     </div>
-                    <div class="room-item">
-                        <div class="real-room">
-                            <div class="room-type">商务套房 <button class="btn btn-delete">删除</button></div>
-                            <div class="money">RMB 300</div>
-                            <div class="population">6/6</div>
-                            <button class="btn room-full">满房</button>
-                        </div>
-                    </div>
+
                     <div class="room-item">
                         <div class="real-room">
                             <a href="#" class="bxyd-add" @click='addRoom()'><img src="../../assets/img/bgyd_add.png" width="100%" height="100%"></a>
@@ -159,27 +137,51 @@
         <!--提示信息框-->
         <div class="modal" id="modal" :class="{true:'modal-in'}[showModel]">
             <div class="modal-title">
-                <div class="title">编辑</div>
+                <div class="title">添加房间</div>
                 <a href="javascript:void(0);" class="close" @click="modalClose()"><img src="../../assets/img/close.png"></a>
             </div>
             <div class="modal-content">
-                <form id="form">
-                    <div class="input-group">
-                        <label class="control-label">价格</label>
-                        <input type="text" id="jg" name="jg" class="form-control">
-                        <label class="control-label">间数</label>
-                        <input type="text" id="js" name="js" class="form-control">
-                    </div>
-                    <div class="input-group">
-                        <div class="t-a-l">房型选择</div>
-                        <div class="fxzz-div">
-                            <button class="btn btn-fxxz">标准房</button>
-                            <button class="btn btn-fxxz">商务套房</button>
-                            <button class="btn btn-fxxz active">豪华套房</button>
-                        </div>
-                    </div>
-                    <button class="btn btn-makeSure" onclick="save(modal)">确定</button>
-                </form>
+                <el-form
+                ref="hotelForm"
+                label-width="80px"
+                :model="hotelForm"
+                :hide-required-asterisk="true"
+                :rules="rules"
+                >
+
+                <el-form-item label="添加房型" >
+                    <el-input placeholder="请输入内容" v-model="roomType" clearable class="input-with-select">
+                        <el-button slot="append" icon="el-icon-check" @click="saveRoomType(roomType)"></el-button>
+                    </el-input>
+                </el-form-item>
+                
+                <el-form-item label="房间价格" :required="true" prop="price">
+                    <el-input v-model="hotelForm.price" clearable></el-input>
+                </el-form-item>
+
+                <el-form-item label="房间数量" :required="true">
+                      <el-input-number v-model="hotelForm.count" :min="1" :max="1000" ></el-input-number>
+                </el-form-item>
+
+                <el-form-item label="选择房型" prop="type">
+                    <el-select placeholder="请选择房型" v-model="hotelForm.type" :required="true" >
+                        <el-option
+                        v-for="item in hotelRoomType"
+                        :key="item.type"
+                        :label="item.type"
+                        :value="item.id"
+                        style="padding-left: 10px;"
+                        ></el-option>
+                    </el-select>
+                    <el-tooltip class="item" effect="dark" content="删除此房型" placement="top"  v-if="hotelForm.type">
+                        <el-button type="danger" icon="el-icon-delete" circle size="mini" v-if="hotelForm.type" @click='deleteType(hotelForm.type)'></el-button>
+                    </el-tooltip>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" class="btn btn-makeSure1" @click='save(hotelForm)'>确定</el-button>
+                </el-form-item>
+                </el-form>
             </div>
         </div>
         <div class="modal-backdrop" :class="{true:'modal-in modal-backdrop-active'}[showModel]"></div>
@@ -189,39 +191,135 @@
 
 <script>
 import auth from '../../api/auth'
+import bgyd from '../../api/bgyd'
+import Date from "../../components/date.vue";
 
 export default {
     name: 'Bgyd',
+    components:{
+        Date
+    },
     data (){
             return{
                 menuName:[
-                '房间管理',
-                '预定管理'
+                    '房间管理',
+                    '预定管理'
                 ],
+                roomType:'',
                 menuIndex:0,
                 showModel:false,
-                loading:true
+                loading:false,
+                hotelList:[],
+                hotelRoomType:[],
+                hotelForm:{
+                    price:'',
+                    ssbg:this.currentHotelTreenode,
+                    type:null,
+                    count:1,
+                },
+                rules: {
+                    price: [
+                    { required: true, message: "请输入房间价格", trigger: "blur" },
+                    ],
+                    type: [{ required: true, message: "请选择房间类型", trigger: "change" }]
+                },
             }
         },
+        props:['currentHotelTreenode'],
         created(){
             // auth.test()
+            console.log(this.currentHotelTreenode)
+            // this.getHotelList()
         },
         methods:{
+            getHotelList($event){
+                this.loading=true
+                bgyd.getList(this.currentHotelTreenode,$event).then(res=>{
+                    console.log(res)
+                    this.loading=false
+                    this.hotelList =res.data.list
+                })
+            },
+            saveRoomType(fx){
+                if(fx==''){
+                   return 
+                }else{
+                    bgyd.saveRoomType(this.currentHotelTreenode,fx).then(res=>{
+                        console.log(res)
+                        if(res.success){
+                            this.$message.success("添加房型成功!");
+                            this.selectRoomType()
+                        }
+                    })
+                }
+            },
+            deleteType(ids){
+                console.log(ids)
+                this.$confirm('此操作将删除该房型, 是否确认?', '警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let idsList = []
+                    idsList.push(ids)
+                    console.log(idsList)
+                    bgyd.deleteRoomType(idsList).then(res=>{
+                        console.log(res)
+                        if(res.success){
+                            this.selectRoomType()
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });          
+                });
+            },
             changeType(index){
                 this.menuIndex = index
             },
             addRoom(){
                 this.showModel=true
+                this.selectRoomType()
+            },
+            selectRoomType(){
+                bgyd.selectRoomType().then(res=>{
+                    this.hotelRoomType = res.data.list
+                })
             },
             modalClose(){
                 this.showModel=false
+            },
+            save(hotelForm){
+                this.$refs.hotelForm.validate(valid => {
+                    if (valid) {
+                        console.log(this.hotelForm)
+                        bgyd.saveRooms(this.hotelForm).then(res => {
+                            console.log(res);
+                            if (res.success) {
+                                this.$message.success("添加成功!");
+                                this.getHotelList();
+                                this.showModel = false;
+                            }
+                        });
+                    } else {
+                        console.log("error submit!!");
+                        return false;
+                    }
+                })
             }
         },
         computed:{
-
         }
 }
 </script>
+
+
 
 <style lang='less'>
 @import "../../assets/common.less";
@@ -321,6 +419,10 @@ export default {
 }
 .modal-content{
     padding: 30px 28px 20px 28px;
+    .el-input-group__append :hover{
+        background: #77a6fe;
+        color: white;
+    }
 }
 .modal-content .form-control{
     margin-bottom: 25px;
@@ -331,14 +433,15 @@ export default {
     background-color: #f6f6f6;
     line-height: 24px;
 }
-.btn-makeSure{
-    background:url("../../assets/img/make_sure.png") no-repeat;
+.btn-makeSure1{
+    background: #77a6fe;
     width: 180px;
     height: 30px;
     line-height: 30px;
     color: white;
     padding: 0;
 }
+
 .input-group .control-label{
     width: 45px;
     display: inline-block;
@@ -361,6 +464,12 @@ export default {
 .fxzz-div>.active{
     background-color: #77a6fe;
     color: white;
+}
+.el-button--primary:hover{
+    // background: transparent;
+}
+.el-button.is-circle {
+    padding: 7px!important;
 }
 //提示信息框
 </style>

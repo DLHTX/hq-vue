@@ -1,6 +1,5 @@
 <template>
-  <div id="app" v-if='user'>
-<!-- <div id="app" > -->
+  <div class="app" v-if='user'>
     <el-container style="height:100%">
         <el-header style="height: 55px;line-height: 55px;">
             <a href="#" class="logo">
@@ -42,7 +41,7 @@
             </el-aside>
             <el-main>
                 <Cygl v-if="menuNameIndex=='餐饮管理'" ref='onGetList' :currentTreenode='currentTreenode'></Cygl>
-                <Bgyd v-if="menuNameIndex=='宾馆预订'"></Bgyd>
+                <Bgyd v-if="menuNameIndex=='宾馆预订'" ref='onGetHotelList' :currentHotelTreenode='currentHotelTreenode'></Bgyd>
                 <Xfjl v-if="menuNameIndex=='消费记录'"></Xfjl>
             </el-main>
         </el-container>
@@ -70,22 +69,18 @@ export default {
   data(){
 	return{
 		menuName:[
-			// '餐饮管理',
-			// '宾馆预订',
 			'消费记录'
         ],
         menuIndex:0,
         menuNameIndex:'',
         showTipModel:false,
         shopList:[],
-        currentTreenode:null,
         hotelList:[],
+        currentTreenode:null,
+        currentHotelTreenode:null,
         shopAuthList:[
             {'name':'东苑餐厅','id':1,'auth':'dyct:1'},
             {'name':'西苑餐厅','id':2,'auth':'xyct:2'},
-            // {'name':'翠屏苑','id':1,'auth':'cpy:1'},
-            // {'name':'翠屏苑','id':1,'auth':'cpy:1'},
-            // {'name':'翠屏苑','id':1,'auth':'cpy:1'},
         ],
         hotelAuthList:[{'name':'御园宾馆','id':19,'auth':'yybg:19'},]   
 	}
@@ -101,13 +96,14 @@ export default {
             'getPermissions'
         ]),
      
-        onCheckLogin(){//判断登录状态
+        onCheckLogin(){
             if(!this.isLogin){
                 this.$router.push({path: this.$route.query.redirect || '/'})
             }else{
                 this.checkPermissions()
             }
-        },
+        },//判断登录状态
+
         checkPermissions(){
             this.shopAuthList.forEach(item=>{
                 //mapActions中获取权限
@@ -133,28 +129,40 @@ export default {
             }
             if(!(this.hotelList===[])){
                 this.menuName.unshift('宾馆预订') //配置第二模块权限
+                setTimeout(()=>{
+                    this.currentHotelTreenode = this.hotelList[0].id
+                },300)
             }
         },
+
         changeType(index,name){
             this.menuIndex = index
             this.menuNameIndex = name
         },
+
         newMessage(data){
             if(this.showTipModel){this.showTipModel = false}else{
                 this.showTipModel = data
                 console.log(this.showTipModel)
             }
-        },
+        },//消息提示
+
         onLogout(){
             this.logout()
-              this.$message({message: '注销成功!',type: 'success'});
+            this.$message({message: '注销成功!',type: 'success'});
             this.$router.push({path: this.$route.query.redirect || '/'})
-        },
-        onGetList(treeNode) {
-            console.log(treeNode)
-            this.currentTreenode = treeNode
-            this.$refs.onGetList.onGetList(this.currentTreenode)
-        },
+        },//注销
+
+        // onGetList() {
+        //     console.log('1111111111')
+        //     // this.currentTreenode = treeNode
+        //     this.$refs.onGetList.onGetList(this.currentTreenode)
+        // },//默认载入餐厅
+
+        // onGetHotelList(){
+
+        // }
+
     
   },
   computed:{
@@ -168,7 +176,7 @@ export default {
 
 <style lang="less">
 @import "../../assets/common.less";
-#app{
+.app{
     height: 100%;
     position: relative;
     overflow: hidden;

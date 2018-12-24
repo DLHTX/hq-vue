@@ -28,8 +28,10 @@ export default {
             menuIndex:0 
         }
     },
+    // props:['Balcony'],
     created(){
         this.forEachData(this.whichWeek)
+        this.$emit('ycrqDate',new Date().getFullYear() + '' + (new Date().getMonth() + 1) + new Date().getDate())
     },
     methods:{
         toToday(){
@@ -87,9 +89,11 @@ export default {
             this.forEachData(this.whichWeek)
             console.log(this.whichWeek)
         },
-        changeType(index,data){
+        changeType(index,date){
             this.menuIndex = index
-            console.log(new Date(data.date))
+            let  ycrqDate = new Date(date.date)
+            let ycrq = ycrqDate.getFullYear() + '' + (ycrqDate.getMonth() + 1) + ycrqDate.getDate()
+            this.$emit('ycrqDate',ycrq)
             //toUTCString()如何使用 toUTCString() 将当日的日期（根据 UTC）转换为字符串。 Fri, 14 Dec 2018 03:42:29 GMT
         }
       

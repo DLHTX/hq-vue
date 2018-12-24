@@ -8,43 +8,45 @@ let formatData = (data)=>{
 const URL = {
   GET_LIST: 'xydc/app/stct/pageList1',
   GET_DETAIL: '/blog/:blogId',
-  CREATE: '/blog',
+  UPDATE: 'xydc/app/stct/update',
   UPLOADIMG: 'xydc/app/stct/filesUpload',
-  SAVE: 'xydc/app/stct/save'
+  SAVE: 'xydc/app/stct/save',
+  DELETE:'xydc/app/stct/deleteById',
+  //以上是第一模块
+  SELECTBOX:'xydc/app/stct/selectBox',
+  QUERYLIST:'xydc/app/stct/queryList/',
+  UPDATASTATE:'xydc/app/stct/updateStatus/',//更改包厢是否显示
+  SAVEBOX:'xydc/app/stct/saveBox' //添加包厢
 }
 
 export default {
-  getList(page,rows,treeNode,cplb,mc) {
-    return request(URL.GET_LIST, 'POST', formatData({ page,rows,treeNode,cplb,mc}))
-  },
-  uploadImg(myfiles) {
-    return request(URL.UPLOADIMG, 'POST', myfiles)
-  },
-  save(form) {
-    return request(URL.SAVE, 'POST', formatData(form))
-  },
-  // getIndexBlogs({ page=1 } = { page: 1}) {
-  //   return this.getBlogs({ page, atIndex: true })
-  // },
-
-  // getBlogsByUserId(userId, { page=1, atIndex } = { page: 1}) {
-  //   return this.getBlogs({ userId, page, atIndex })
-  // },
-
-  // getDetail({ blogId }) {
-  //   return request(URL.GET_DETAIL.replace(':blogId', blogId))
-  // },
-
-  // updateBlog({ blogId }, { title, content, description, atIndex }) {
-  //   return request(URL.UPDATE.replace(':blogId', blogId), 'PATCH', { title, content, description, atIndex })
-  // },
-
-  // deleteBlog({ blogId }) {
-  //   return request(URL.DELETE.replace(':blogId', blogId), 'DELETE')
-  // },
-
-  // createBlog({ title = '', content = '', description = '', atIndex = false} = { title: '', content: '', description: '', atIndex: false}) {
-  //   return request(URL.CREATE, 'POST', { title, content, description, atIndex })
-  // }
+    getList(page,rows,treeNode,cplb,mc) {
+        return request(URL.GET_LIST, 'POST', formatData({ page,rows,treeNode,cplb,mc}))
+    },
+    uploadImg(myfiles) {
+        return request(URL.UPLOADIMG, 'POST', myfiles)
+    },
+    save(form) { 
+        return request(URL.SAVE, 'POST', formatData(form))
+    },
+    isOrderUpdate(id,type){//是否预定
+        return request(URL.UPDATE, 'POST', formatData({id,type}))
+    },
+    delete(ids){
+        return request(URL.DELETE, 'POST', formatData({ids:ids.join(',')}))
+    },
+    //以上是第一模块
+    getBalcony(refe,ycrq){
+        return request(URL.SELECTBOX, 'POST', formatData({refe,ycrq}))
+    },
+    queryList(id){
+        return request(URL.QUERYLIST + id, 'GET')
+    },
+    updateStatus(id,type){
+        return request(URL.UPDATASTATE, 'POST', formatData({id,type}))
+    },
+    saveBox(form){
+        return request(URL.SAVEBOX, 'POST', formatData(form))
+    }
 
 }

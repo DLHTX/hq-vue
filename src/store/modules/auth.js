@@ -6,12 +6,12 @@ import Cookie from 'js-cookie'
 import { setLocalStorage,isQuotaExceeded,getLocalStorage } from '../../helpers/locTime'
 const state = {
   user: null,
-  isLogin: false
+  isLogin: false,
 }
 
 const getters = {
   user: state => state.user,
-  isLogin: state => state.isLogin
+  isLogin: state => state.isLogin,
 }
 
 const mutations = {
@@ -21,7 +21,8 @@ const mutations = {
 
   setLogin(state, payload) {
     state.isLogin = payload.isLogin
-  }
+  },
+
 }
 
 const actions = {
@@ -35,12 +36,6 @@ const actions = {
             _token.loginInfo = res.data.loginInfo
             setLocalStorage('token',encodeURIComponent(JSON.stringify(_token)))
             setLocalStorage('permissions',JSON.stringify(res.data.permissions))
-            // localStorage.setItem()
-            // setTimeout(()=>{
-            //     console.log('执行清除token 函数')   
-            //     localStorage.removeItem('token')
-            //     commit('setLogin',{ isLogin: false })
-            // },10000)
         },err=>{
             console.log('用户名或者密码错误')
         }).catch(err=>{
@@ -73,9 +68,7 @@ const actions = {
         }else{
             return false
         }
-    }
-
-
+    },
 
   // async register({ commit }, { username, password }) {
   //   let res = await auth.register({ username, password })
@@ -101,9 +94,7 @@ const actions = {
 
   /*
     this.logout().then(isLogin=>{
-    
     })
-
   */
 }
 

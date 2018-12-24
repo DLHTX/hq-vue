@@ -8,9 +8,27 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import store from './store';
 import Util from '@/helpers/util';
+import VueLazyLoad from 'vue-lazyload'
 Vue.use(ElementUI);
 Vue.use(Util);
 Vue.config.productionTip = false;
+Vue.use(VueLazyLoad,{
+  error:require('./assets/img/nopic.png'),
+  loading:require('./assets/img/loading.gif')
+})
+
+// 图片在assets文件夹，就需要使用require（）进行引入。
+// Vue.use(VueLazyload, {
+//   preLoad: 1.3,
+//   loading: require('./assets/123.gif'),
+//   attempt: 1
+// })
+//图片在static文件夹，就可以直接写路径了
+// Vue.use(VueLazyload, {
+//   preLoad: 1.3,
+//   loading: '../static/123.gif',
+//   attempt: 1
+// })
 
 /* eslint-disable no-new */
 new Vue({

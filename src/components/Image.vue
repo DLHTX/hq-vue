@@ -12,16 +12,14 @@ import { setLocalStorage,isQuotaExceeded,getLocalStorage } from '../helpers/locT
 export default {
     data(){
         return {
-            sysV : this.sys,
-            keyV : this.keys,
-            typeV : this.type,
             isLoad: false,
-            url: axios.defaults.baseURL + 'xydc/app/common/attachmentDownload?type='+this.type+'&isStream=1&sys='+this.sys +'&key='+this.keys+'&_token='+getLocalStorage("token")
+            url:axios.defaults.baseURL + 'xydc/upload/' + this.keys
+            // url: axios.defaults.baseURL + 'xydc/app/common/attachmentDownload?type='+this.type+'&isStream=1&sys='+this.sys +'&key='+this.keys+'&_token='+getLocalStorage("token")
         }
     },
-    props:['sys','keys','type'],
+    props:['keys'],
     created(){
-        //console.log(axios.defaults.baseURL, getLocalStorage("token"))
+        console.log(this.keys)
     },
     methods:{
         imageLoaded(){
