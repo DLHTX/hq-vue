@@ -200,36 +200,36 @@ export default {
         Date
     },
     data (){
-            return{
-                menuName:[
-                    '房间管理',
-                    '预定管理'
-                ],
-                roomType:'',
-                menuIndex:0,
-                showModel:false,
-                loading:false,
-                hotelList:[],
-                hotelRoomType:[],
-                hotelForm:{
-                    price:'',
-                    ssbg:this.currentHotelTreenode,
-                    type:null,
-                    count:1,
-                },
-                rules: {
-                    price: [
+        return{
+            menuName:[
+                '房间管理',
+                '预定管理'
+            ],
+            roomType:'',
+            menuIndex:0,
+            showModel:false,
+            loading:false,
+            hotelList:[],
+            hotelRoomType:[],
+            hotelForm:{
+                price:'',
+                ssbg:this.currentHotelTreenode,
+                type:null,
+                count:1,    
+            },
+            rules: {
+                price: [
                     { required: true, message: "请输入房间价格", trigger: "blur" },
-                    ],
-                    type: [{ required: true, message: "请选择房间类型", trigger: "change" }]
-                },
-            }
+                ],
+                type: [{ required: true, message: "请选择房间类型", trigger: "change" }]
+            },
+        }
         },
         props:['currentHotelTreenode'],
         created(){
             // auth.test()
-            console.log(this.currentHotelTreenode)
             // this.getHotelList()
+            console.log(this.currentHotelTreenode)
         },
         methods:{
             getHotelList($event){
@@ -314,8 +314,6 @@ export default {
                 })
             }
         },
-        computed:{
-        }
 }
 </script>
 

@@ -9,6 +9,11 @@ import 'element-ui/lib/theme-chalk/index.css';
 import store from './store';
 import Util from '@/helpers/util';
 import VueLazyLoad from 'vue-lazyload'
+import hoverCss from 'hover.css'//hovercss
+import anime from 'animejs'//anime库
+
+Vue.use(anime)
+Vue.use(hoverCss)//hoverCss useage:'hvr-xxx' http://ianlunn.github.io/Hover/
 Vue.use(ElementUI);
 Vue.use(Util);
 Vue.config.productionTip = false;

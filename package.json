@@ -12,8 +12,10 @@
     "zip": "rm -f *.zip && zip  -r `git branch | grep '\\* ' | cut -d ' ' -f 2`.zip . -x 'node_modules/*'"
   },
   "dependencies": {
+    "animejs": "^2.2.0",
     "axios": "^0.18.0",
     "element-ui": "^2.3.9",
+    "hover.css": "^2.3.2",
     "js-cookie": "^2.2.0",
     "jsencrypt": "^3.0.0-rc.1",
     "less-loader": "^4.1.0",

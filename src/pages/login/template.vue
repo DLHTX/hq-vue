@@ -1,5 +1,5 @@
 <template>
-<div style="height: 100%;" :style="fontStyle">
+<div style="height: 100%;transition:all .5s" :style="fontStyle">
     <div class="navbar">
 		<nav class="nav__mobile"></nav>
 		<el-header style="height: 55px;line-height: 55px;">
@@ -14,19 +14,21 @@
 		<div class="container">
 			<div class="auth__inner">
 				<div class="auth__media">
-					<img src="../../assets/img/undraw_selfie.svg">
+					<img src="../../assets/img/undraw_selfie.svg" class="svg">
 				</div>
 				<div class="auth__auth">
                     <el-color-picker v-model="fontStyle.background" size="mini" style="margin-bottom: 15px;"></el-color-picker>
-					<h1 class="auth__title" style="font-family: BMYH;" >南京航空航天大学后勤管理平台</h1>
-					<p style="font-family: BMYH;" >登录页面</p>
+					<h1 class="auth__title" style="font-family: BMYH;transfrom:translateX(-20px)" id='code'>
+                        南京航空航天大学后勤管理平台
+                    </h1>
+					<p style="font-family: BMYH;" > 登录页面</p>
 					<div class="form">
 						<input class="fakefield">
-						<label >用户名</label>
+						<label class='hvr-forward'>用户名</label>
 						<input type="text" autocomplete="on" placeholder="请输入用户名" v-model="username" name="email">
-						<label >密码</label>
+						<label class='hvr-forward'>密码</label>
 						<input type="password" placeholder="请输入密码"  v-model="password" >
-						<button class="button button__accent"  @click='onLogin()' v-loading.fullscreen.lock="fullscreenLoading" >登录</button>
+						<button class="button button__accent hvr-shrink"  @click='onLogin()' v-loading.fullscreen.lock="fullscreenLoading" >登录</button>
 					</div>
 				</div>
 			</div>
@@ -39,7 +41,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { setLocalStorage } from '../../helpers/locTime';
-
+import anime from 'animejs'//anime库
 
 export default {
     name:'login',
@@ -49,9 +51,9 @@ export default {
             password:'',
             fullscreenLoading :false,
             fontStyle:{
-                'background':'#ffffff'
-            }
-
+                'background':'#ffffff',
+            },
+            res:'南京航空航天大学后勤管理平台'
         }
     },
     watch:{
@@ -62,6 +64,9 @@ export default {
             },
             deep:true
         }
+    },
+    mounted(){
+        this.anime()
     },
     created (){
         this.checkLogin()
@@ -98,6 +103,22 @@ export default {
                 }
             })
         },
+        anime(){
+            var n= 0
+            var timer = setInterval(()=>{
+                n+=1
+                code.innerHTML = this.res.substring(0,n)
+                if(n>=this.res.length){
+                    console.log('清除')
+                    window.clearInterval(timer)
+                    var cssSelector = anime({
+                        targets: '#code',
+                        translateX:20,
+                        duration: 2000    
+                    });
+                }
+            },200)
+        }
         
     },
     computed:{
