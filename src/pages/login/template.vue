@@ -18,17 +18,15 @@
 				</div>
 				<div class="auth__auth">
                     <el-color-picker v-model="fontStyle.background" size="mini" style="margin-bottom: 15px;"></el-color-picker>
-					<h1 class="auth__title" style="font-family: BMYH;transfrom:translateX(-20px)" id='code'>
-                        南京航空航天大学后勤管理平台
-                    </h1>
-					<p style="font-family: BMYH;" > 登录页面</p>
+					<h1 class="auth__title" style="font-family: BMYH;transfrom:translateX(-20px)" id='code'>南京航空航天大学后勤管理平台</h1>
+					<p style="font-family: BMYH;">登录页面</p>
 					<div class="form">
 						<input class="fakefield">
 						<label class='hvr-forward'>用户名</label>
 						<input type="text" autocomplete="on" placeholder="请输入用户名" v-model="username" name="email">
 						<label class='hvr-forward'>密码</label>
 						<input type="password" placeholder="请输入密码"  v-model="password" >
-						<button class="button button__accent hvr-shrink"  @click='onLogin()' v-loading.fullscreen.lock="fullscreenLoading" >登录</button>
+						<button style='border-color:transparent;width:100px;' :style='divStyle'  @mousemove="enter($event)" class="button button__accent hvr-grow"  @click='onLogin()' v-loading.fullscreen.lock="fullscreenLoading" >登录</button>
 					</div>
 				</div>
 			</div>
@@ -53,6 +51,9 @@ export default {
             fontStyle:{
                 'background':'#ffffff',
             },
+            divStyle:{
+                 'background': 'radial-gradient(circle at '+'0'+'px '+'0'+'px'+',#968fff, #06d19c)'
+            },
             res:'南京航空航天大学后勤管理平台'
         }
     },
@@ -68,7 +69,7 @@ export default {
     mounted(){
         this.anime()
     },
-    created (){
+    created(){
         this.checkLogin()
         this.onCheckLogin()
         //this.$router.push({path: this.$route.query.redirect || '/index'})
@@ -79,6 +80,9 @@ export default {
             'login',
             'checkLogin',
         ]),
+        enter(event){
+            this.divStyle.background = 'radial-gradient(circle at '+event.offsetX+'px '+event.offsetY+'px'+', #968fff, #06d19c)'
+        },
         onCheckLogin(){
             if(localStorage.getItem('color')){
                 this.fontStyle.background = localStorage.getItem('color')
@@ -127,7 +131,6 @@ export default {
             'user',
         ]),
         handerColor:()=>{
-
         }
     }
 }
