@@ -27,29 +27,28 @@
               <a href="javascript:void(0)">全部</a>
             </li>
             <li
-              v-for="(cuisineLb,index) in cuisineLbList"
-              :key="index"
-              @click="searchLb(cuisineLb.id,index)"
-              :class="{true:'active'}[cplbIndex===index]"
+                v-for="(cuisineLb,index) in cuisineLbList"
+                :key="index"
+                :class="{true:'active'}[cplbIndex===index]"
+                @click="searchLb(cuisineLb.id,index)"
             >
               <a href="javascript:void(0)">{{cuisineLb.mc}}</a>
             </li>
           </ul>
         </div>
         <div class="search-group">
-          <span class="search-group-addon" @click="searchCp(input)">
+            <span class="search-group-addon" @click="searchCp(input)">
             <img src="../../assets/img/search.png">
-          </span>
-          <input type="text" placeholder="搜索" id="search" v-model="input">
-          <!-- <el-input id="search" placeholder="请输入内容" v-model="input" clearable></el-input> -->
+            </span>
+            <input type="text" placeholder="搜索" id="search" v-model="input">
+            <!-- <el-input id="search" placeholder="请输入内容" v-model="input" clearable></el-input> -->
         </div>
       </div>
       <waterfall
         class="cuisine"
         :line-gap="280"
         :watch="cuisineList"
-        style="overflow: scroll;height: 700px;"
-      >
+        style="overflow: scroll;height: 700px;">
         <waterfall-slot
           class="cuisine-box"
           v-for="(item,index) in cuisineList"
@@ -193,7 +192,86 @@
       </div>
     </div>
     <!--section3-->
-    <div class="section section3 clearfix" v-if="menuIndex===2"></div>
+    <div class="section section3 clearfix" v-if="menuIndex===2">
+        <div class="content xfjl">
+            <div class="screen-search">
+                <div class="screen">
+                    <span>筛选</span>
+                    <ul class="screen-ul">
+                        <li class="active"><a href="#">全部</a></li>
+                        <li><a href="#">时间</a></li>
+                        <li><a href="#">房型</a></li>
+                        <li><a href="#">状态</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="table-box">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>选择</th>
+                        <th>订单号</th>
+                        <th>消费用户</th>
+                        <th>手机号码</th>
+                        <th>入住时间</th>
+                        <th>离店时间</th>
+                        <th>时长</th>
+                        <th>房型</th>
+                        <th>支付方式</th>
+                        <th>消费金额</th>
+                        <th>操作员</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>1234567893</td>
+                        <td>老干妈</td>
+                        <td>18646461212</td>
+                        <td>2018-11-02</td>
+                        <td>2018-11-03</td> 
+                        <td>1晚</td>
+                        <td>标准房</td>
+                        <td>网络消费</td>
+                        <td>420</td>
+                        <td>徐老师</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>1234567893</td>
+                        <td>老干妈</td>
+                        <td>18646461212</td>
+                        <td>2018-11-02</td>
+                        <td>2018-11-03</td>
+                        <td>1晚</td>
+                        <td>标准房</td>
+                        <td>网络消费</td>
+                        <td>420</td>
+                        <td>徐老师</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="bottom-ope clearfix">
+                <div class="left-btn">
+                    <input type="checkbox" class="allCheckbox">
+                    <span>全选</span>
+                    <button class="btn btn-export">导出</button>
+                </div>
+                <ul class="paging">
+                    <li><a href="javascript:void(0)">2/10</a></li>
+                    <li><a href="javascript:void(0)">上一页</a></li>
+                    <li><a href="javascript:void(0)">1</a></li>
+                    <li><a href="javascript:void(0)">2</a></li>
+                    <li><a href="javascript:void(0)">3</a></li>
+                    <li><a href="javascript:void(0)">4</a></li>
+                    <li><a href="javascript:void(0)">5</a></li>
+                    <li><a href="javascript:void(0)">下5页</a></li>
+                    <li><a href="javascript:void(0)">下一页</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
     <!--提示信息框 添加菜品-->
     <div class="modal" id="modal" :class="{true:'modal-in'}[showModel]">
       <div class="modal-title">
@@ -332,7 +410,7 @@ export default {
   },
   data() {
     return {
-        menuName: ["菜品管理", "包厢预订", "场地预订"],
+        menuName: ["菜品管理", "包厢预订", "订单管理"],
         cuisineList: [],
         cuisineLbList: [],
         sfkyd: true,
@@ -371,9 +449,8 @@ export default {
             mc: [
                 { required: true, message: "请输入包厢名称", trigger: "blur" },
                 { min: 2, max: 7, message: "长度在 2 到 7 个字符", trigger: "blur" }
-            ],
-            // rnrs: [{ required: true, message: "请选择容纳人数", trigger: "blur" }],
-        },
+            ],rnrs: [{ required: true, message: "请选择容纳人数", trigger: "blur" }],
+        },// 
         chooseCuiItem:[],
         isLoad : [],
         imgUrl:axios.defaults.baseURL + 'xydc/upload/',
@@ -530,22 +607,22 @@ export default {
 
     onGetList(treeNode = this.currentTreenode, cplbId = null, mc = null) {
       this.loading = true;
-      cygl
-        .getList(this.currentPage, this.rows, treeNode, cplbId, mc)
-        .then(res => {
+      cygl.getList(this.currentPage, this.rows, treeNode, cplbId, mc).then(res => {
            //菜品list
           this.cuisineList = []
           setTimeout(()=>{
             this.cuisineList = res.data.cbList;
-          },300) //图片不刷新的暂时解决办法 哎
+          },300) //图片不刷新的暂时解决办法 哎...
 
           if (this.currentPage === 1) {
             this.cuisineLbList = res.data.lbList; //分类
           }
+
           this.total = res.data.total; //总数
           this.loading = false; //载入动画
-        //   this.$forceUpdate()//强制刷新
-          
+
+          //this.$forceUpdate()//强制刷新
+
           console.log(this.cuisineList)
         });
     },//获取首页的菜品全部信息
@@ -575,7 +652,7 @@ export default {
       this.loading = true;
       this.cplbIndex = -1;
       this.onGetList();
-    //   this.$forceUpdate()//强制刷新
+    //this.$forceUpdate()//强制刷新
     },//搜索全部
     
     //以上是第一模块method--------------------------
@@ -602,11 +679,11 @@ export default {
                     res.data.list[i].ycsj= '中餐,空'
                     res.data.list[i].jlid = res.data.list[i].jlid + ',' +'null'
                 }else if(res.data.list[i].ycsj==='晚餐'){
-                        res.data.list[i].ycsj= '空,晚餐'
-                        res.data.list[i].jlid ='null' +',' + res.data.list[i].jlid 
+                    res.data.list[i].ycsj= '空,晚餐'
+                    res.data.list[i].jlid ='null' +',' + res.data.list[i].jlid 
                 }else if (res.data.list[i].ycsj==='null'){
                     res.data.list[i].ycsj= '空,空'
-                        res.data.list[i].jlid ='null' +',' + 'null'
+                    res.data.list[i].jlid ='null' +',' + 'null'
                 }
             }
             console.log(res.data.list)
@@ -704,38 +781,5 @@ export default {
 
 <style scoped lang="less" src="./template.less"></style>
 <style lang="less" scoped>
-.screen .screen-ul a {
-  font-family: "微软雅黑";
-}
-.el-upload-list__item-actions {
-  .el-upload-list__item-preview i {
-    display: none;
-  }
-  .el-upload-list__item-delete {
-    position: absolute;
-    left: 0;
-    top: 57px;
-  }
-}
-.el-loading-spinner .el-loading-text {
-  color: #ffffff;
-}
-.el-loading-spinner i {
-  color: #ffffff;
-}
-.el-form-item {
-  margin: 20px 0 20px 0;
-}
-.ChoosedCuiItem{
-    box-shadow: 0 0 2px 2px #4981ea!important;
-}
-.sjActive{
-    box-shadow: 0px 0px 1px 2px #3c77ff inset;
-    transition: all 0.3s;
-    background: #fd6666;
-}
-.BalconyShow{
-    background-color: #d4d4d4!important;
-    color: #ffffff!important;
-}
+
 </style>

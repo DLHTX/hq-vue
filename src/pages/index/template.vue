@@ -7,7 +7,7 @@
                 <img src="../../assets/img/logo_text.png">
             </a>
             <ul class="header-ul">
-                <li><a href="#"><img src="../../assets/img/alarm.png"><span class="badge">15</span></a></li>
+                <li><a href="#" @click='newMessage()'><img src="../../assets/img/alarm.png"><span class="badge">15</span></a></li>
                 <li @click='onLogout' v-if='user.xb==="男"'><a href="#"><img src="../../assets/img/head_portrait_boy.png" style="height: 28px;">{{user.xm}}</a></li>
                 <li @click='onLogout' v-if='user.xb==="女"'><a href="#"><img src="../../assets/img/head_portrait_gril.png" style="height: 28px;">{{user.xm}}</a></li>
                 <!-- <li><a href="#"><img src="../../assets/img/switch.png">门店切换</a></li> -->
@@ -25,7 +25,7 @@
                         <img src="../../assets/img/switch.png">  门店切换
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-for="hotel in hotelList" :key='hotel.name' v-if="hotelList">{{hotel.name}}</el-dropdown-item>
+                    <el-dropdown-item @click.native='onGetHotelList(hotel.id)' v-for="hotel in hotelList" :key='hotel.name' v-if="hotelList">{{hotel.name}}</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
 
@@ -34,9 +34,7 @@
         <el-container>
             <el-aside style="width: 130px;">
                 <ul class="menu">
-                    <li v-for='(name,index) in menuName' :key="name" @click='changeType(index,name)' :class='{true:"active"}[menuIndex===index]'><a href="javascript:void(0);">{{name}}</a></li>
-                    <!-- <li>宾馆预订</li>
-                    <li>消费记录</li> -->
+                    <li v-for='(name,index) in menuName' :key="name" @click='changeType(index,name)' :class='{true:"active"}[menuNameIndex===name]'><a href="javascript:void(0);">{{name}}</a></li>
                 </ul>
             </el-aside>
             <el-main>
@@ -68,21 +66,24 @@ export default {
   },
   data(){
 	return{
-		menuName:[
-			'消费记录'
-        ],
+		menuName:[],
         menuIndex:0,
         menuNameIndex:'',
         showTipModel:false,
         shopList:[],
         hotelList:[],
+        shopNum:0,
+        hotelNum:0,
         currentTreenode:null,
         currentHotelTreenode:null,
         shopAuthList:[
             {'name':'东苑餐厅','id':1,'auth':'dyct:1'},
             {'name':'西苑餐厅','id':2,'auth':'xyct:2'},
-        ],
-        hotelAuthList:[{'name':'御园宾馆','id':19,'auth':'yybg:19'},]   
+        ],//餐厅权限列表
+        hotelAuthList:[
+            {'name':'御园宾馆','id':19,'auth':'yybg:19'},
+            {'name':'明御楼宾馆','id':20,'auth':'mylbg:20'},
+        ]//宾馆权限列表
 	}
   },
   created(){
@@ -105,33 +106,49 @@ export default {
         },//判断登录状态
 
         checkPermissions(){
+            this.hotelAuthList.forEach(item=>{
+                this.getPermissions(item.auth).then(res=>{
+                    if(res){
+                        this.hotelList.push(item)
+                        this.setMenuNameHotel()
+                    }
+                })//查询宾馆权限
+            })
+
             this.shopAuthList.forEach(item=>{
                 //mapActions中获取权限
                 this.getPermissions(item.auth).then(res=>{
                     if(res){
                         this.shopList.push(item)
+                        this.setMenuNameShop()
                     }
                 })//查询餐厅权限
             })
-            this.hotelAuthList.forEach(item=>{
-                this.getPermissions(item.auth).then(res=>{
-                    if(res){
-                        this.hotelList.push(item)
-                    }
-                })//查询宾馆权限
-            })
-            if(!(this.shopList===[])){
-                this.menuName.unshift('餐饮管理') //配置第一模块权限
+        },
+        setMenuNameHotel(){
+            this.hotelNum++
+            if(this.hotelNum == 1){
+                this.menuName.push('宾馆预订') //配置宾馆预订是否显示
                 setTimeout(()=>{
-                    this.currentTreenode = this.shopList[0].id
+                    this.currentHotelTreenode = this.hotelList[0].id //默认treenode
                 },300)
-                
             }
-            if(!(this.hotelList===[])){
-                this.menuName.unshift('宾馆预订') //配置第二模块权限
+            if(this.menuNameIndex==''){
+                this.menuNameIndex = '宾馆预订' //配置登录后载入界面
+            }
+        },
+
+        setMenuNameShop(){
+            this.shopNum++
+            if(this.shopNum == 1){
+                this.menuName.push('餐饮管理') //配置餐饮管理是否显示
                 setTimeout(()=>{
-                    this.currentHotelTreenode = this.hotelList[0].id
+                    this.currentTreenode = this.shopList[0].id //默认treenode
                 },300)
+            }
+            if(this.menuNameIndex==''){
+                console.log('餐饮管理',this.menuName[0])
+                this.menuNameIndex = '餐饮管理' //配置登录后载入界面
             }
         },
 
@@ -140,10 +157,10 @@ export default {
             this.menuNameIndex = name
         },
 
-        newMessage(data){
+        newMessage(){
             if(this.showTipModel){this.showTipModel = false}else{
-                this.showTipModel = data
-                console.log(this.showTipModel)
+                this.showTipModel = true
+                // console.log(this.showTipModel)
             }
         },//消息提示
 
@@ -153,17 +170,17 @@ export default {
             this.$router.push({path: this.$route.query.redirect || '/'})
         },//注销
 
-        // onGetList() {
-        //     console.log('1111111111')
-        //     // this.currentTreenode = treeNode
-        //     this.$refs.onGetList.onGetList(this.currentTreenode)
-        // },//默认载入餐厅
+        onGetList(treeNode) {
+            console.log(treeNode)
+            this.currentTreenode = treeNode
+            this.$refs.onGetList.onGetList(this.currentTreenode)
+        },//默认载入餐厅
 
-        // onGetHotelList(){
-
-        // }
-
-    
+        onGetHotelList(treeNode){
+            console.log('当前',this.currentHotelTreenode)
+            this.currentHotelTreenode = treeNode
+            this.$refs.onGetHotelList.getHotelList(this.currentHotelTreenode)
+        }//默认载入宾馆
   },
   computed:{
       ...mapGetters([

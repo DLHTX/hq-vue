@@ -41,26 +41,31 @@ const actions = {
         }).catch(err=>{
             return Message.error('用户名或密码错误2')
         })
-    },
+    },//登录
+
     getGrxx({commit},username){
         return auth.getGrxx(username)
         .then(res=>{
             console.log(res)
             commit('setUser',{ user: res.data.grxx })
         })
-    },
+    },//获取个人信息
+
     checkLogin({commit}){
         if(localStorage.getItem('token')){
             commit('setLogin',{ isLogin: true })
         }else{
             commit('setLogin',{ isLogin: false })
         }
-    },
+    },//检查是否登录
+
     logout({commit}){
         localStorage.removeItem('token')
+        localStorage.removeItem('permissions')
         commit('setLogin',{isLogin:false})
         commit('setUser',{user:null})
     },
+
     getPermissions({commit},auth){
         // console.log(JSON.parse(getLocalStorage('permissions')))
         if((JSON.parse(getLocalStorage('permissions')).indexOf(auth)) >= 0){

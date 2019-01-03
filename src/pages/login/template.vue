@@ -27,7 +27,7 @@
 						<label class='hvr-forward'>密码</label>
 						<input type="password" placeholder="请输入密码"  v-model="password" >
 						<button style='border-color:transparent;width:100px;' :style='divStyle'  @mousemove="enter($event)" class="button button__accent hvr-grow"  @click='onLogin()' v-loading.fullscreen.lock="fullscreenLoading" >登录</button>
-					</div>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -52,7 +52,7 @@ export default {
                 'background':'#ffffff',
             },
             divStyle:{
-                 'background': 'radial-gradient(circle at '+'0'+'px '+'0'+'px'+',#968fff, #06d19c)'
+                'background':'radial-gradient(circle at '+'0'+'px '+'0'+'px'+',#968fff, #06d19c)'
             },
             res:'南京航空航天大学后勤管理平台'
         }
@@ -67,11 +67,12 @@ export default {
         }
     },
     mounted(){
-        this.anime()
+        this.anime()//文字载入动画...
     },
     created(){
         this.checkLogin()
         this.onCheckLogin()
+ 
         //this.$router.push({path: this.$route.query.redirect || '/index'})
     },
     methods:{
@@ -111,16 +112,16 @@ export default {
             var n= 0
             var timer = setInterval(()=>{
                 n+=1
-                code.innerHTML = this.res.substring(0,n)
-                if(n>=this.res.length){
-                    console.log('清除')
-                    window.clearInterval(timer)
-                    var cssSelector = anime({
-                        targets: '#code',
-                        translateX:20,
-                        duration: 2000    
-                    });
-                }
+                    code.innerHTML = this.res.substring(0,n)
+                    if(n>=this.res.length){
+                        console.log('清除')
+                        window.clearInterval(timer)
+                        var cssSelector = anime({
+                            targets: '#code',
+                            translateX:20,
+                            duration: 2000    
+                        });
+                    }
             },200)
         }
         
@@ -139,30 +140,29 @@ export default {
 
 <style scoped lang="less" src="./template.less"></style>
 <style>
-.data span{
-   background-color: #a5a5a5;
-}
-.auth__auth{
-    font-family: BMYH!important;
-}
 *{
     -moz-user-select: none; 
     -o-user-select:none; 
     -khtml-user-select:none; 
     -webkit-user-select:none; 
     -ms-user-select:none; 
-    
+}
+.data span{
+   background-color: #a5a5a5;
+}
+.auth__auth{
+    font-family:BMYH!important;
 }
 input:-webkit-autofill {
     background-color: #FAFFBD;
     background-image: none;
     -webkit-box-shadow: 0 0 0 1000px white inset;
-border: 1px solid #CCC!important;
+    border: 1px solid #CCC!important;
 
 }
 input:-webkit-autofill:active {
-        -webkit-transition-delay: 99999s;
-        -webkit-transition: color 99999s ease-out, background-color 99999s ease-out;
+    -webkit-transition-delay: 99999s;
+    -webkit-transition: color 99999s ease-out, background-color 99999s ease-out;
 }
 .bottom{
     text-align: center;

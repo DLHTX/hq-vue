@@ -9,15 +9,15 @@
         <div class="section section1 clearfix" v-if='menuIndex===0'
         v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)">
             <div class="left">
-                <Date v-on:ycrqDate='getHotelList($event)'></Date>
+                <Date v-on:ycrqDate='setChooseTime($event)' v-on:ycrqDate2='setChooseTime2($event)' ></Date>
                 <div class="room-list clearfix">
-                    <div class="room-item active" v-for='(hotel,index) in hotelList' :key='index'>
+                    <div class="room-item" v-for='(hotel,index) in hotelList' :key='index'>
                         <div class="real-room">
-                            <div class="room-type">{{hotel.typ}} <button class="btn btn-delete">删除</button></div>
+                            <div class="room-type">{{hotel.typ}} <button class="btn btn-delete hvr-fade" @click='deleteRoom(hotel.id)'>删除</button></div>
                             <div class="money" style=" color: #fd6666;">RMB {{hotel.price}}</div>
                             <div class="population">{{hotel.total-hotel.odd}}/{{hotel.total}}</div>
-                            <button class="btn room-have" v-if='!(hotel.odd === 0)'>有房</button>
-                            <button class="btn room-full"  v-if='hotel.odd === 0'>满房</button>
+                            <button class="btn room-have hvr-round-corners" v-if='!(hotel.odd === null)' @click='orderForRooms(hotel.id)'>有房</button>
+                            <button class="btn room-full"  v-if='hotel.odd === null'>满房</button>
                         </div>
                     </div>
 
@@ -30,7 +30,9 @@
             </div>
         </div>
         <!--section2-->
-        <div class="section section2 clearfix" v-if='menuIndex===1'>
+        <div class="section section2 clearfix" v-if='menuIndex===1'
+        v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)"
+        >
             <div class="screen-search">
                 <div class="screen">
                     <span>筛选</span>
@@ -121,17 +123,18 @@
                 </div>
             </div>
             <div class="bottom-ope clearfix">
-                <ul class="paging">
-                    <li><a href="javascript:void(0)">2/10</a></li>
-                    <li><a href="javascript:void(0)">上一页</a></li>
-                    <li><a href="javascript:void(0)">1</a></li>
-                    <li><a href="javascript:void(0)">2</a></li>
-                    <li><a href="javascript:void(0)">3</a></li>
-                    <li><a href="javascript:void(0)">4</a></li>
-                    <li><a href="javascript:void(0)">5</a></li>
-                    <li><a href="javascript:void(0)">下5页</a></li>
-                    <li><a href="javascript:void(0)">下一页</a></li>
-                </ul>
+                    <ul class="paging" style="position: absolute;right: 20px;top: 50%;transform: translateY(-14px);">
+                        <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page.sync="currentPage"
+                        background
+                        :page-size="rows"
+                        :page-sizes="[10, 15, 20, 25]"
+                        layout="sizes,total,prev, pager, next, jumper"
+                        :total="total"
+                        ></el-pagination>
+                    </ul>
             </div>
         </div>
         <!--提示信息框-->
@@ -209,6 +212,8 @@ export default {
             menuIndex:0,
             showModel:false,
             loading:false,
+            chooseTime:null,
+            chooseTime2:null,//new date格式 请求需要用到
             hotelList:[],
             hotelRoomType:[],
             hotelForm:{
@@ -218,11 +223,12 @@ export default {
                 count:1,    
             },
             rules: {
-                price: [
-                    { required: true, message: "请输入房间价格", trigger: "blur" },
-                ],
-                type: [{ required: true, message: "请选择房间类型", trigger: "change" }]
+                price: [{ required: true, message: "请输入房间价格", trigger: "blur" }],
+                type:  [{ required: true, message: "请选择房间类型", trigger: "change" }]
             },
+            total: null,
+            rows: 10,
+            currentPage: 1,
         }
         },
         props:['currentHotelTreenode'],
@@ -232,17 +238,55 @@ export default {
             console.log(this.currentHotelTreenode)
         },
         methods:{
-            getHotelList($event){
+            setChooseTime($event){
+                this.chooseTime = $event
+                this.getHotelList()
+            },
+            setChooseTime2($event){
+                this.chooseTime2 = $event
+            },//设置new date()格式的当前时间
+            getHotelList(currentHotelTreenode){
                 this.loading=true
-                bgyd.getList(this.currentHotelTreenode,$event).then(res=>{
+                if(currentHotelTreenode!=null){
+                    console.log('当前truenode',currentHotelTreenode)
+                    this.currentHotelTreenode = currentHotelTreenode
+                }
+                bgyd.getList(this.currentHotelTreenode,this.chooseTime).then(res=>{
                     console.log(res)
                     this.loading=false
                     this.hotelList =res.data.list
                 })
+            },//查询所有房间
+            orderForRooms(id){
+                 this.$confirm('此操作将设置为满房, 是否确认?', '警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    bgyd.orderForRooms(id,this.currentHotelTreenode,this.chooseTime2,null).then(res=>{
+                        console.log(res)
+                         if(res.success){
+                            this.$message({
+                                type: 'success',
+                                message: '设置成功!'
+                            });
+                            this.getHotelList()
+                        }else{
+                            this.$message.error('出现问题,请重新操作!')
+                        }
+                    }).catch(()=>{
+                        this.$message.error('出现问题,请重新操作!')
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });          
+                });
             },
             saveRoomType(fx){
                 if(fx==''){
-                   return 
+                   return   
                 }else{
                     bgyd.saveRoomType(this.currentHotelTreenode,fx).then(res=>{
                         console.log(res)
@@ -252,7 +296,32 @@ export default {
                         }
                     })
                 }
-            },
+            },//添加房间类型
+            deleteRoom(id){
+                this.$confirm('此操作将删除所有房间, 是否确认?', '警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    bgyd.deleteRooms(id,this.currentHotelTreenode).then(res=>{
+                        console.log(res)
+                        if(res.success){
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getHotelList()//重新请求
+                        }
+                    }).catch(()=>{
+                        this.$message.error('该房间已被引用,无法删除!')
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });          
+                });
+            },//删除所有房间
             deleteType(ids){
                 console.log(ids)
                 this.$confirm('此操作将删除该房型, 是否确认?', '警告', {
@@ -271,7 +340,13 @@ export default {
                                 type: 'success',
                                 message: '删除成功!'
                             });
+                            this.hotelForm.type = null //删除完了 要去掉选择的值
+                            this.showModel=false
+                        }else{
+                            this.$message.error('该房型已被引用,无法删除!')
                         }
+                    }).catch(()=>{
+                        this.$message.error('该房型已被引用,无法删除!')
                     })
                 }).catch(() => {
                     this.$message({
@@ -279,19 +354,22 @@ export default {
                         message: '已取消删除'
                     });          
                 });
-            },
+            },//删除房间类型
             changeType(index){
                 this.menuIndex = index
+                if(index==1){
+                    this.getOrderList()
+                }
             },
             addRoom(){
                 this.showModel=true
                 this.selectRoomType()
-            },
+            },//添加房间
             selectRoomType(){
                 bgyd.selectRoomType().then(res=>{
                     this.hotelRoomType = res.data.list
                 })
-            },
+            },//查找房型
             modalClose(){
                 this.showModel=false
             },
@@ -312,163 +390,29 @@ export default {
                         return false;
                     }
                 })
-            }
+            },//保存form表单
+            
+            //以上是第一模块的方法
+            getOrderList(){
+                console.log('a')
+                bgyd.findOrderList(this.currentPage,this.rows).then(res=>{
+                    console.log(res)
+                })
+            },
+            handleSizeChange(val) {
+                this.rows = val;
+                this.getOrderList();
+            },//分页插件 size变化
+            handleCurrentChange(val) {
+                this.getOrderList();
+            },//分页插件
         },
 }
 </script>
 
 
-
+<style lang="less" src="./template.less"></style>
 <style lang='less'>
-@import "../../assets/common.less";
-@import "../cygl/template.less";
 
-.room-list{margin-left: -10px;margin-right: -10px;}
-.room-list>.room-item{float: left;width: 160px;height:120px;padding-right: 10px;padding-left: 10px;box-sizing: border-box;margin-bottom:20px;}
-.room-list>.room-item>.real-room{background-color: white;box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);border-radius: 6px;cursor: pointer;height: 100%;padding:4px;font-size: 14px;}
-.room-list>.room-item.active>.real-room{box-shadow: 0 0 2px 2px #77a6fe;}
-.real-room>div{line-height: 27px;color: gray;}
-.btn-delete{border:1px solid #77a6fe;color: #77a6fe;width:40px;border-radius: 20px;float:right;font-size: 12px;line-height: 20px;margin-top: 3px;}
-.room-type{color: black !important;}
-.real-room>button{width:130px;height: 30px;line-height: 30px;margin-top:8px;}
-.room-full{background-color: #ff6c6c;}
-.room-have{background-color: #77a6fe;}
-.t-a-l{text-align: left;}
-
-.ydgl-item{background-color: white;padding:15px 30px;height: 70px;box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);border-radius:4px;margin-bottom:20px;position: relative;background-repeat: no-repeat;background-position: 64% 0;}
-.ydgl-item>.ydgl-content{display: inline-block;margin-left:30px;font-size: 14px;color: #000000;}
-.ydgl-item>.ydgl-content>div{margin-bottom:7px;}
-.ydgl-item>.ydgl-content>div:last-child{margin-bottom:0;}
-.ydgl-item>.ydgl-img{margin-top:-50px;}
-.ydgl-item>.ydgl-content>div>.name{font-weight: bold;margin-right:40px;}
-.ydgl-item>.ydgl-content>div>.phone{margin-right:40px;}
-.to{margin:0 10px;}
-.small-font,.to{color:#999999;font-size: 12px;}
-.ydgl-item>.ydgl-content>div>.ddbh{margin-right:18px;}
-.ydgl-item>.ydgl-content>div>.bh{margin-right:40px;}
-.ydgl-item>.ydgl-content>div>.zwddsj{margin-right:15px;}
-.ydgl-item>.btn-check-in{width:100px;line-height: 30px;background-color: #77a6fe;position: absolute;right: 30px;bottom:15px;}
-.ydgl-item>.price{font-size: 16px;color: #ff4f4f;position: absolute;right: 60px;top: 24px;font-weight: bold;}
-.check-out-detail{float: right;}
-.check-out-detail>div{margin-bottom:7px;font-size: 14px;color: #77a6fe;text-align: right;}
-.check-out-detail>div:last-child{margin-bottom:0;}
-.check-out-detail>.price{font-size: 22px;color: #ff4f4f;font-weight: bold;}
-.check-out-detail>div>.time{margin-right: 8px;}
-.ydgl-tui{background-image: url("../../assets/img/tui.png");}
-.ydgl-zhu{background-image: url("../../assets/img/zhu.png");}
-.ydgl-yu{background-image: url("../../assets/img/yu.png");}
-//提示信息框
-/**弹框*/
-.modal{
-    position: fixed;
-    z-index: 10000;
-    top: 40%;
-    left: 50%;
-    display: none;
-    overflow: hidden;
-    -webkit-transition-property: -webkit-transform,opacity;
-    transition-property: transform,opacity;
-    -webkit-transform: translate3d(-50%,-50%,0) scale(1.185);
-    transform: translate3d(-50%,-50%,0) scale(1.185);
-    text-align: center;
-    opacity: 0;
-    color: #000;
-    border-radius: 4px;
-    background-color: white;
-}
-.modal.modal-in{
-    display: block;
-    -webkit-transition-duration: 400ms;
-    transition-duration: 400ms;
-    -webkit-transform: translate3d(-50%,-50%,0) scale(1);
-    transform: translate3d(-50%,-50%,0) scale(1);
-    opacity: 1;
-}
-.modal-backdrop{
-    position: fixed;
-    z-index: 998;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    -webkit-transition-duration: 400ms;
-    transition-duration: 400ms;
-    opacity: 0;
-    background: rgba(0,0,0,.4);
-    display: none;
-}
-.modal-backdrop.modal-backdrop-active{
-    opacity: 1;
-    display: block;
-}
-.modal-title{
-    line-height: 34px;
-    height: 34px;
-    padding:0 20px;
-    background-color: #77a6fe;
-    color: white;
-}
-.modal-title>.title{
-    float: left;
-    font-size: 16px;
-}
-.modal-title>.close{
-    float: right;
-}
-.modal-content{
-    padding: 30px 28px 20px 28px;
-    .el-input-group__append :hover{
-        background: #77a6fe;
-        color: white;
-    }
-}
-.modal-content .form-control{
-    margin-bottom: 25px;
-    padding: 0 12px;
-    border: none;
-    width: 120px;
-    box-sizing: border-box;
-    background-color: #f6f6f6;
-    line-height: 24px;
-}
-.btn-makeSure1{
-    background: #77a6fe;
-    width: 180px;
-    height: 30px;
-    line-height: 30px;
-    color: white;
-    padding: 0;
-}
-
-.input-group .control-label{
-    width: 45px;
-    display: inline-block;
-    text-align: left;
-}
-.fxzz-div{
-    text-align: left;
-    margin: 15px 0 30px 0;
-}
-.fxzz-div>.btn-fxxz{
-    width:100px;
-    height: 28px;
-    background-color: #f6f6f6;
-    color: #999999;
-    margin-right: 17px;
-}
-.fxzz-div>.btn-fxxz:last-child{
-    margin-right:0;
-}
-.fxzz-div>.active{
-    background-color: #77a6fe;
-    color: white;
-}
-.el-button--primary:hover{
-    // background: transparent;
-}
-.el-button.is-circle {
-    padding: 7px!important;
-}
-//提示信息框
 </style>
 

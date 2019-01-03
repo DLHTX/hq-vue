@@ -6,7 +6,7 @@ import { setLocalStorage,isQuotaExceeded,getLocalStorage } from './locTime'
 
 // console.log(getLocalStorage("token"))
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-axios.defaults.baseURL = 'http://cz2gmc.natappfree.cc/'
+axios.defaults.baseURL = 'http://qukp5g.natappfree.cc/'
 axios.defaults.withCredentials = true
 
 let token = getLocalStorage("token")

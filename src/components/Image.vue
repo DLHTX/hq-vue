@@ -19,7 +19,7 @@ export default {
     },
     props:['keys'],
     created(){
-        console.log(this.keys)
+        console.log(this.keys) 
     },
     methods:{
         imageLoaded(){

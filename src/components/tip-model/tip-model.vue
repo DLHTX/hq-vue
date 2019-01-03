@@ -33,7 +33,7 @@ export default {
 
 
 <style>
-.tip-modal{top:963px;left:20px;transition:all .5s;position:fixed;left: 20px;z-index: 999;width:280px;height: 160px;box-shadow: 0 0 6px 2px rgba(119, 166, 254, 0.4);padding:30px 10px 0 10px;background-color: white;cursor: pointer;}
+.tip-modal{top:997px;left:20px;transition:all .5s;position:fixed;left: 20px;z-index: 999;width:280px;height: 160px;box-shadow: 0 0 6px 2px rgba(119, 166, 254, 0.4);padding:30px 10px 0 10px;background-color: white;cursor: pointer;}
 .tip-modal>.tip-item{font-size: 14px;margin-bottom: 10px;}
 .tip-modal>.tip-item>img{float:left;margin: 3px 8px 0 0;}
 .tip-modal>.tip-item>span{color: #36c0fb;font-weight: bold;}

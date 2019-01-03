@@ -22,29 +22,29 @@ const URL = {
 export default {
     getList(page,rows,treeNode,cplb,mc) {
         return request(URL.GET_LIST, 'POST', formatData({ page,rows,treeNode,cplb,mc}))
-    },
+    },//获取餐厅列表
     uploadImg(myfiles) {
         return request(URL.UPLOADIMG, 'POST', myfiles)
-    },
+    },//上传图片
     save(form) { 
         return request(URL.SAVE, 'POST', formatData(form))
-    },
-    isOrderUpdate(id,type){//是否预定
+    },//保存餐厅
+    isOrderUpdate(id,type){
         return request(URL.UPDATE, 'POST', formatData({id,type}))
-    },
+    },//是否预定
     delete(ids){
         return request(URL.DELETE, 'POST', formatData({ids:ids.join(',')}))
-    },
+    },//删除餐厅
     //以上是第一模块
     getBalcony(refe,ycrq){
         return request(URL.SELECTBOX, 'POST', formatData({refe,ycrq}))
-    },
+    },//获取包厢
     queryList(id){
         return request(URL.QUERYLIST + id, 'GET')
     },
     updateStatus(id,type){
         return request(URL.UPDATASTATE, 'POST', formatData({id,type}))
-    },
+    },//更新状态
     saveBox(form){
         return request(URL.SAVEBOX, 'POST', formatData(form))
     }
