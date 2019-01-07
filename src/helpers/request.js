@@ -2,11 +2,9 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import querystring from 'querystring' //序列化请求参数
 import { setLocalStorage,isQuotaExceeded,getLocalStorage } from './locTime'
-
-
 // console.log(getLocalStorage("token"))
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-axios.defaults.baseURL = 'http://qukp5g.natappfree.cc/'
+axios.defaults.baseURL = 'http://ksujz7.natappfree.cc/'
 axios.defaults.withCredentials = true
 
 let token = getLocalStorage("token")

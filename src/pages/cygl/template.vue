@@ -92,7 +92,7 @@
         <div class="left-btn">
           <el-checkbox v-model="allChecked" class="checkBox" style="margin:0 20px;color:#77a6fe!important; ">全选</el-checkbox>
           <button class="btn btn-tjcp" @click="addCp()">添加菜品</button>
-          <button class="btn btn-cpdr">菜品导入</button>
+          <button class="btn btn-cpdr" @click='importCp()'>菜品导入</button>
           <button class="btn btn-tpdr">图片导入</button>
           <button class="btn btn-sc" @click="deleteCp()">删除</button>
         </div>
@@ -272,7 +272,7 @@
             </div>
         </div>
     </div>
-    <!--提示信息框 添加菜品-->
+    <!--提示信息框 添加菜品start-->
     <div class="modal" id="modal" :class="{true:'modal-in'}[showModel]">
       <div class="modal-title">
         <div class="title">添加菜品</div>
@@ -339,10 +339,10 @@
       </div>
     </div>
     <div class="modal-backdrop" :class="{true:'modal-in modal-backdrop-active'}[showModel]"></div>
-    <!--提示信息框 添加菜品-->
+    <!--提示信息框 添加菜品end-->
 
 
-    <!--提示信息框 添加包厢-->
+    <!--提示信息框 添加包厢start-->
     <div class="modal" :class="{true:'modal-in'}[showBalconyModel]">
       <div class="modal-title">
         <div class="title">添加包厢</div>
@@ -377,7 +377,53 @@
       </div>
     </div>
     <div class="modal-backdrop" :class="{true:'modal-in modal-backdrop-active'}[showBalconyModel]"></div>
-    <!--提示信息框 添加包厢-->
+    <!--提示信息框 添加包厢end-->
+
+    <!--提示信息框 添加菜品start-->
+    <div class="modal" id="modal" :class="{true:'modal-in'}[showAddModel]">
+      <div class="modal-title">
+        <div class="title">导入菜品</div>
+        <a href="javascript:void(0);" class="close" @click="modalClose()">
+          <img src="../../assets/img/close.png">
+        </a>
+      </div>
+      <div class="modal-content" style="width: 400px;min-height:125px;">
+        <el-upload v-if='active==0'
+        class="upload-demo"
+        :multiple="true"
+ 
+        action="${pageContext.request.contextPath}/lookup/editEvidence/123"
+        :auto-upload="false"
+        :http-request="uploadFile"
+        ref="upload"
+        >
+            <el-button size="small" type="primary" style="height: 33px; width: 90px;margin-bottom: 14px;">选择图片</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
+            <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="subPicForm">上传到服务器</el-button> -->
+        </el-upload>
+
+        <el-upload v-if='active==1'
+        class="upload-demo"
+        :multiple="false"
+        action="${pageContext.request.contextPath}/lookup/editEvidence/123"
+     
+        :auto-upload="false"
+        :http-request="uploadExcel"
+        ref="upload2"
+        >
+            <el-button size="small" type="primary" style="height: 33px; width: 90px;margin-bottom: 14px;">选择excel文件</el-button>
+            <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="subPicExcel">上传到服务器</el-button> -->
+        </el-upload>
+        <div @click='download()' v-if='active==1' style="    cursor: pointer;">下载模板</div>
+
+         <el-button style="margin-top: 40px;height: 45px;width: 90px;" @click="subPicForm" v-if='active===0'>下一步</el-button>
+        <el-button style="margin-top: 40px;height: 45px;width: 90px;" @click="subPicExcel" v-if='active===1'>下一步</el-button>
+          <!-- <button class="btn btn-makeSure" @click="save(form)">确定</button> -->
+
+      </div>
+    </div>
+    <div class="modal-backdrop" :class="{true:'modal-in modal-backdrop-active'}[showAddModel]"></div>
+    <!--提示信息框 添加菜品end-->
 
 
   </div>
@@ -398,6 +444,7 @@ import {
 } from "../../helpers/locTime";
 import axios from "axios";
 import Date from "../../components/date.vue";
+import querystring from 'querystring'
 
 export default {
   name: "Cygl",
@@ -436,6 +483,7 @@ export default {
         total: null,
         loading: false,
         showModel: false,
+        showAddModel:false,
         attachImg:axios.defaults.baseURL + "xydc/app/stct/filesUpload?_token=" + getLocalStorage("token"),
         rules: {
             mc: [
@@ -466,8 +514,10 @@ export default {
             rnrs:[1, 5],
             ssst:this.currentTreenode,
             sfdc:true
-        }
-
+        },
+        imgList:[],
+        active: 0
+    
     };
   },
   created() {
@@ -599,6 +649,7 @@ export default {
 
     modalClose() {
       this.showModel = false;
+      this.showAddModel = false
     },//关闭菜品model
 
     changeType(index) {
@@ -752,8 +803,84 @@ export default {
             return false;
             }
         });
-    }
+    },
      //以上是第二模块method========================
+
+    importCp(){
+        this.active=0//初始化步骤条
+        this.showAddModel=true
+    },
+
+    uploadFile(file){
+        console.log(file)
+        this.formDate.append('myfiles', file.file);
+        console.log(this.formDate)
+    },
+    subPicForm(){
+        this.formDate = new FormData()
+        this.$refs.upload.submit();
+        console.log( this.formDate)
+        cygl.uploadImg(this.formDate).then(res=>{
+            console.log(res)
+            if(res.data.list){
+                this.imgList = res.data.list
+                this.active = 1 //关闭这一步
+                this.$refs.upload.clearFiles() //上传成功后清空文件列表
+                this.$message.success('图片上传成功,请进行下一步')
+            }else{
+                this.$message({
+                    type: 'warning',
+                    message: '您没有选中任何图片啊'
+            }   );
+            }
+            
+        })
+    },
+
+
+
+
+
+
+
+    uploadExcel(excel){
+        this.formexcel.append('file', excel.file);
+        // form.append('list', this.imgList);
+        console.log(this.formexcel)
+      
+    },
+    subPicExcel(){
+        this.formexcel = new FormData()
+        this.formexcel.append('list', this.imgList);
+        this.$refs.upload2.submit();
+        console.log(this.formexcel)
+        cygl.importCP(this.formexcel).then(res=>{
+            if(res.success){
+                console.log(res)
+                this.active = 0
+                this.$refs.upload2.clearFiles()//上传成功后清空文件列表
+                this.showAddModel = false
+                this.onGetList();//刷新本页面
+                this.$message.success('导入文件成功!')
+            }else{
+                this.$message.error('操作失败,请重新操作')
+            }
+        }).catch(res=>{
+            this.$message.error('操作失败,请检查上传文件格式!')
+        })
+    },
+
+    next(){
+        if (this.active++ > 1) this.active = 0;
+        console.log(this.active)
+    },
+    download(){
+        window.open(axios.defaults.baseURL + 'xydc/app/stct/download'+'?_token=' + getLocalStorage('token'))
+        console.log(getLocalStorage('token'))
+    }
+
+    // 
+
   },
   computed: {},
   watch:{ //可以使用字符串 对 data中的对象属性进行监听

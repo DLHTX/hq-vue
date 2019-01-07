@@ -48,31 +48,33 @@
                     <input type="text" placeholder="搜索" id="search">
                 </div>
             </div>
-            <div class="ydgl-list">
-                <div class="ydgl-item ydgl-yu">
+            <div class="ydgl-list" style="height:85%;overflow-y:scroll;">
+                <div class="ydgl-item ydgl-yu" v-for='order in orderList' :key='order.id' >
                     <img src="../../assets/img/ydgl1.png" class="ydgl-img">
                     <div class="ydgl-content">
                         <div>
-                            <span class="name">羊星星</span>
-                            <span class="phone">156****6616</span>
-                            <span>2018-11-02</span>
+                            <span class="name">{{order.orderId.ydr}}</span>
+                            <span class="phone">{{order.orderId.phone}}</span>
+                            <span>{{new Date(order.orderId.kssj).getFullYear()+'-'+ (new Date(order.orderId.kssj).getMonth()+1) +'-' + new Date(order.orderId.kssj).getDate()}}</span>
                             <span class="to small-font">至</span>
-                            <span>2018-11-03</span>
+                            <span>{{new Date(order.orderId.jssj).getFullYear()+'-' + (new Date(order.orderId.jssj).getMonth()+1) +'-' + new Date(order.orderId.jssj).getDate()}}</span>
                         </div>
                         <div>
-                            <span class="small-font">网络预订 （含早 | 已支付 | 2间1晚）</span>
+                            <span class="small-font" v-if='order.orderId.fkfs=="JZ"'>记账支付 </span>
+                            <span class="small-font" v-if='order.orderId.fkfs=="WX"'>微信支付 </span>
                         </div>
                         <div>
                             <span class="small-font ddbh">订单编号</span>
-                            <span class="small-font bh">12345678258369</span>
+                            <span class="small-font bh">{{order.orderId.ddbh}}</span>
                             <span class="small-font zwddsj">最晚到店时间</span>
-                            <span class="small-font">2018-11-02 23:30</span>
+                            <span class="small-font">{{new Date(order.orderId.jssj).getFullYear()+'-' + (new Date(order.orderId.jssj).getMonth()+1) +'-' + new Date(order.orderId.jssj).getDate()}} 23:30</span>
                         </div>
                     </div>
-                    <span class="price">￥620</span>
-                    <button class="btn btn-check-in">入住</button>
+                    <span class="price">￥{{order.orderId.zje}}</span>
+                    <button class="btn btn-check-in" v-if='order.orderId.fkfs=="JZ"'>记账支付</button>
+                    <button class="btn btn-check-in" v-if='order.orderId.fkfs=="WX"'>微信支付</button>
                 </div>
-                <div class="ydgl-item ydgl-zhu">
+                <!-- <div class="ydgl-item ydgl-zhu">
                     <img src="../../assets/img/ydgl1.png" class="ydgl-img">
                     <div class="ydgl-content">
                         <div>
@@ -120,7 +122,7 @@
                         <div>共一晚</div>
                         <div class="price">￥620</div>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="bottom-ope clearfix">
                     <ul class="paging" style="position: absolute;right: 20px;top: 50%;transform: translateY(-14px);">
@@ -226,9 +228,12 @@ export default {
                 price: [{ required: true, message: "请输入房间价格", trigger: "blur" }],
                 type:  [{ required: true, message: "请选择房间类型", trigger: "change" }]
             },
+
+
             total: null,
             rows: 10,
             currentPage: 1,
+            orderList:[],
         }
         },
         props:['currentHotelTreenode'],
@@ -395,8 +400,13 @@ export default {
             //以上是第一模块的方法
             getOrderList(){
                 console.log('a')
+                this.loading=true
                 bgyd.findOrderList(this.currentPage,this.rows).then(res=>{
-                    console.log(res)
+                    if(res.success){
+                        this.loading = false
+                        this.orderList = res.data.list
+                        // this.total = res.data.size
+                    }
                 })
             },
             handleSizeChange(val) {

@@ -13,7 +13,18 @@
 .room-have{background-color: #77a6fe;}
 .t-a-l{text-align: left;}
 
-.ydgl-item{background-color: white;padding:15px 30px;height: 70px;box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);border-radius:4px;margin-bottom:20px;position: relative;background-repeat: no-repeat;background-position: 64% 0;}
+.ydgl-list::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 7px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+}
+.ydgl-list::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    background: #d8d8d8;
+    border-radius: 5px;
+}
+.ydgl-list::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    background: transparent;
+}
+.ydgl-item{margin-right: 10px;background-color: white;padding:15px 30px;height: 70px;box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);border-radius:4px;margin-bottom:20px;position: relative;background-repeat: no-repeat;background-position: 64% 0;}
 .ydgl-item>.ydgl-content{display: inline-block;margin-left:30px;font-size: 14px;color: #000000;}
 .ydgl-item>.ydgl-content>div{margin-bottom:7px;}
 .ydgl-item>.ydgl-content>div:last-child{margin-bottom:0;}

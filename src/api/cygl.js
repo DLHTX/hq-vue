@@ -16,7 +16,9 @@ const URL = {
   SELECTBOX:'xydc/app/stct/selectBox',
   QUERYLIST:'xydc/app/stct/queryList/',
   UPDATASTATE:'xydc/app/stct/updateStatus/',//更改包厢是否显示
-  SAVEBOX:'xydc/app/stct/saveBox' //添加包厢
+  SAVEBOX:'xydc/app/stct/saveBox', //添加包厢
+  IMPORTCP:'xydc/app/stct/importCP', //批量导入
+  DOWNLOAD:'xydc/app/stct/download'//下载上传模板
 }
 
 export default {
@@ -47,6 +49,12 @@ export default {
     },//更新状态
     saveBox(form){
         return request(URL.SAVEBOX, 'POST', formatData(form))
+    },
+    importCP(form){
+        return request(URL.IMPORTCP, 'POST', form)
+    },
+    download(){
+        return request(URL.DOWNLOAD, 'GET')
     }
 
 }

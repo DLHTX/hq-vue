@@ -1,5 +1,5 @@
 <template>
-<div style="height: 100%;transition:all .5s" :style="fontStyle">
+<div style="height: 100%;transition:all .5s" :style="fontStyle" >
     <div class="navbar">
 		<nav class="nav__mobile"></nav>
 		<el-header style="height: 55px;line-height: 55px;">
@@ -25,7 +25,7 @@
 						<label class='hvr-forward'>用户名</label>
 						<input type="text" autocomplete="on" placeholder="请输入用户名" v-model="username" name="email">
 						<label class='hvr-forward'>密码</label>
-						<input type="password" placeholder="请输入密码"  v-model="password" >
+						<input type="password" placeholder="请输入密码"  v-model="password" @keyup.enter="onLogin()">
 						<button style='border-color:transparent;width:100px;' :style='divStyle'  @mousemove="enter($event)" class="button button__accent hvr-grow"  @click='onLogin()' v-loading.fullscreen.lock="fullscreenLoading" >登录</button>
                     </div>
 				</div>
@@ -67,12 +67,11 @@ export default {
         }
     },
     mounted(){
-        this.anime()//文字载入动画...
+        //this.anime()//文字载入动画...
     },
     created(){
         this.checkLogin()
         this.onCheckLogin()
- 
         //this.$router.push({path: this.$route.query.redirect || '/index'})
     },
     methods:{
@@ -114,7 +113,6 @@ export default {
                 n+=1
                     code.innerHTML = this.res.substring(0,n)
                     if(n>=this.res.length){
-                        console.log('清除')
                         window.clearInterval(timer)
                         var cssSelector = anime({
                             targets: '#code',
