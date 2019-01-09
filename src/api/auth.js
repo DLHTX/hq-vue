@@ -5,7 +5,7 @@ import querystring from 'querystring' //序列化请求参数
 import { format } from 'util';
 
 const publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC1IbY7yNTPlF/lJtYwP7R3o/t+/hgjgl5vUBlSKx1smWhxg93kffLvezB9N8e7c3fADfHRqimi+/8WLXkYfAmQcDrfvXWg3ngsDH8gxxzw8+n6KQqTCeDpJsgqFnk6HIOBgbDlz8yIA7y910SGr4/LAd4nxtr7lpSw2px40kRRWQIDAQAB";
-const systemType = '@ksujz7' 
+const systemType = '@g4ksmv' 
 let encrypt = new JSEncrypt();
 encrypt.setPublicKey(publicKey);
 

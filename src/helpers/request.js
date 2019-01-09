@@ -4,16 +4,14 @@ import querystring from 'querystring' //序列化请求参数
 import { setLocalStorage,isQuotaExceeded,getLocalStorage } from './locTime'
 // console.log(getLocalStorage("token"))
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-axios.defaults.baseURL = 'http://ksujz7.natappfree.cc/'
+axios.defaults.baseURL = 'http://g4ksmv.natappfree.cc/'
 axios.defaults.withCredentials = true
 
 let token = getLocalStorage("token")
-// console.log(token)
 if(getLocalStorage("token")){
-    // console.log(token)
     axios.defaults.headers.common["_token"] = getLocalStorage("token")
 }else{
-    console.log('没有token')
+    console.log('has no token')
 }
 
 export default function request(url, type = 'GET', data = {}) {

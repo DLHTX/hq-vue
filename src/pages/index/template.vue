@@ -44,7 +44,7 @@
             </el-main>
         </el-container>
     </el-container>
-    <tipModel v-on:showTipModel='newMessage($event)' :class="{true:'tipModelActive'}[showTipModel]"></tipModel>
+    <tipModel v-on:showTipModel='newMessage($event)' :class="{true:'tipModelActive'}[showTipModel]" :xydcMsgList='xydcMsgList'></tipModel>
   </div>
 </template>
 
@@ -55,6 +55,13 @@ import Cygl from '../cygl/template.vue';
 import Xfjl from '../xfjl/template.vue';
 import tipModel from '../../components/tip-model/tip-model.vue';
 import { mapGetters, mapActions } from 'vuex';
+import axios from 'axios'
+import {
+  setLocalStorage,
+  isQuotaExceeded,
+  getLocalStorage
+} from "../../helpers/locTime";
+
 
 export default {
   name: 'index',
@@ -83,12 +90,19 @@ export default {
         hotelAuthList:[
             {'name':'御园宾馆','id':19,'auth':'yybg:19'},
             {'name':'明御楼宾馆','id':20,'auth':'mylbg:20'},
-        ]//宾馆权限列表
+        ],//宾馆权限列表
+        websocket: null,
+        userinfo:null,
+        messageUrl:require('../../assets/sound/message.mp3'),
+        xydcMsgList:['xx包厢已被预订'],
+        bgydMsgList:[]
 	}
   },
   created(){
     this.onCheckLogin()
+    this.initWebSocket(this.user)
   },
+
   methods:{
         ...mapActions([
             'getGrxx',
@@ -180,13 +194,68 @@ export default {
             console.log('当前',this.currentHotelTreenode)
             this.currentHotelTreenode = treeNode
             this.$refs.onGetHotelList.getHotelList(this.currentHotelTreenode)
-        }//默认载入宾馆
+        },//默认载入宾馆
+
+        onConfirm () {
+   		 //需要传输的数据
+            let data = {
+            code: 1,
+            item: 'aaaa'
+            }
+            this.websocketsend(JSON.stringify(data))
+        },
+        initWebSocket (user) { // 初始化websocket
+            let username = user.xm
+            console.log(username)
+            this.websock = new WebSocket('ws://' + axios.defaults.baseURL.replace('http://','') +'xydc/' +'webSocket/' + username )
+            this.websock.onmessage = this.websocketonmessage
+            this.websock.onerror = this.websocketonerror
+            this.websock.onopen = this.websocketonopen
+            this.websock.onclose = this.websocketclose
+        },
+        websocketonopen () { // 连接建立之后执行send方法发送数据
+            // let data = {
+            //     code: 0,
+            //     message: '这是client：初次连接'
+            // }
+            console.log('WebSocket connect success...')
+            //this.websocketsend(JSON.stringify(data))
+        },
+        websocketonerror () { 
+             console.log( 'WebSocket connect failed...')
+        },
+        websocketonmessage (e) { // 数据接收
+            this.newMessage()
+            const message = new Audio(this.messageUrl)
+            message.play()//播放提示音
+            setTimeout(res=>{
+                this.newMessage()
+            },10000)//三秒关闭弹窗
+            console.log('new msg...' + e.data)
+            let msg = e.data
+            if(msg.search('xydc')==0){
+                this.xydcMsgList.unshift(msg.replace('xydc:',''))
+            }else{
+                this.bgydMsgList.unshift(msg.replace('bgyd:',''))
+            }
+        },
+        websocketsend (Data) { // 数据发送
+            this.websock.send(Data)
+        },
+        websocketclose (e) {  // 关闭
+            console.log('close connect...', e)
+            this.initWebSocket()
+        },
+        destroyed () {
+            this.websock.close() // 离开路由之后断开websocket连接
+        }
   },
   computed:{
       ...mapGetters([
           'isLogin',
           'user',
-      ])
+      ]),
+      
   }
 }
 </script>

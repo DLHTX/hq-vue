@@ -1,15 +1,15 @@
 <template>
     <div class="tip-modal">
-        <div class="tip-item clearfix">
+        <div class="tip-item clearfix" v-for='xydcMsg in xydcMsgList' :key='xydcMsg'>
             <img src="../../assets/img/horn.png">
             <span>包厢预定：</span>
-            <div class="tip-text">维多利亚（11月20号晚餐已被预定）</div>
+            <div class="tip-text">{{xydcMsg}}</div>
         </div>
-        <div class="tip-item clearfix">
+        <!-- <div class="tip-item clearfix">
             <img src="../../assets/img/horn.png">
             <span>包厢预定：</span>
             <div class="tip-text">维多利亚（11月21号晚餐已被预定）</div>
-        </div>
+        </div> -->
         <img src="../../assets/img/tip_icon.png" class="alarm" @click='tipModel()'>
         <img src="../../assets/img/xddtz.png" class="xddtz">
     </div>
@@ -18,10 +18,16 @@
 <script>
 export default {
     name:'tipModel',
+    props:[
+        'xydcMsgList'
+    ],
     data(){
         return{
             showTipModel:true
         }
+    },
+    created(){
+        console.log(this.xydcMsgList)
     },
     methods:{
         tipModel(){

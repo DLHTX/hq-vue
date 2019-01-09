@@ -133,6 +133,19 @@
 .xfjl{padding: 20px 20px 0 20px;}
 .xfjl>.screen-search{background-color: white;border-bottom: 0;padding: 8px 0;box-shadow: 0 0 8px 1px rgba(0,0,0,0.1);}
 .table-box{background-color: white;padding:0 30px 60px 30px;box-shadow: 0 0 8px 1px rgba(0,0,0,0.1);}
+
+
+.table-box::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 7px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+}
+.table-box::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    background: #d8d8d8;
+    border-radius: 5px;
+}
+.table-box::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    background: transparent;
+}
 .table{width: 100%;max-width: 100%;margin-bottom: 20px;border-spacing: 0;border-collapse: collapse;}
 .table>thead>tr>th{border-bottom:1px solid #77a6fe;font-size: 14px;color:#111111;line-height: 52px;text-align: center;}
 .table>tbody>tr>td{line-height: 50px;border-bottom:1px solid #e0eafe;text-align: center;font-size: 14px;color: #666666;}

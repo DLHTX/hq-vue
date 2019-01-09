@@ -12,13 +12,16 @@ const URL = {
   UPLOADIMG: 'xydc/app/stct/filesUpload',
   SAVE: 'xydc/app/stct/save',
   DELETE:'xydc/app/stct/deleteById',
+  SAVETYPE:'xydc/app/stct/saveType',//添加菜品类别
+  DELETETYPE:'xydc/app/stct/deleteType',//删除菜品类别
   //以上是第一模块
   SELECTBOX:'xydc/app/stct/selectBox',
   QUERYLIST:'xydc/app/stct/queryList/',
   UPDATASTATE:'xydc/app/stct/updateStatus/',//更改包厢是否显示
   SAVEBOX:'xydc/app/stct/saveBox', //添加包厢
   IMPORTCP:'xydc/app/stct/importCP', //批量导入
-  DOWNLOAD:'xydc/app/stct/download'//下载上传模板
+  //以上是第二模块
+  PAGE:'xydc/app/stct/pageOderList',
 }
 
 export default {
@@ -53,8 +56,14 @@ export default {
     importCP(form){
         return request(URL.IMPORTCP, 'POST', form)
     },
-    download(){
-        return request(URL.DOWNLOAD, 'GET')
+    saveType(mc,refe){
+        return request(URL.SAVETYPE, 'POST',formatData({mc,refe}))
+    },
+    deleteType(ids){
+        return request(URL.DELETETYPE, 'POST',formatData({ids}))
+    },
+    findOrder(treeNode,page,rows){
+        return request(URL.PAGE, 'POST',formatData({treeNode,page,rows}))
     }
 
 }

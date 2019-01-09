@@ -97,10 +97,12 @@ export default {
                 // console.log('login之后的then得到的res是这个',res)
                 this.checkLogin()
                 if(this.isLogin){
-                    this.getGrxx()//获取user信息
-                    this.fullscreenLoading = false;
-                    this.$message({message: '登陆成功!',type:'success'});
-                    this.$router.push({path: this.$route.query.redirect || '/index'})
+                    this.getGrxx().then(res=>{
+                        this.fullscreenLoading = false;
+                        this.$message({message: '登陆成功!',type:'success'});
+                        this.$router.push({path: this.$route.query.redirect || '/index'})
+                    })//获取user信息
+                   
                 }else{
                     this.fullscreenLoading = false;
                     this.$message.error('用户名或密码错误');

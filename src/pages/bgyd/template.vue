@@ -33,7 +33,7 @@
         <div class="section section2 clearfix" v-if='menuIndex===1'
         v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.5)"
         >
-            <div class="screen-search">
+            <!-- <div class="screen-search">
                 <div class="screen">
                     <span>筛选</span>
                     <ul class="screen-ul">
@@ -47,7 +47,7 @@
                     <span class="search-group-addon"><img src="../../assets/img/search.png"></span>
                     <input type="text" placeholder="搜索" id="search">
                 </div>
-            </div>
+            </div> -->
             <div class="ydgl-list" style="height:85%;overflow-y:scroll;">
                 <div class="ydgl-item ydgl-yu" v-for='order in orderList' :key='order.id' >
                     <img src="../../assets/img/ydgl1.png" class="ydgl-img">
@@ -405,7 +405,7 @@ export default {
                     if(res.success){
                         this.loading = false
                         this.orderList = res.data.list
-                        // this.total = res.data.size
+                        this.total = res.data.size
                     }
                 })
             },

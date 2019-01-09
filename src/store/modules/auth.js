@@ -44,11 +44,15 @@ const actions = {
     },//登录
 
     getGrxx({commit},username){
-        return auth.getGrxx(username)
-        .then(res=>{
-            console.log(res)
-            commit('setUser',{ user: res.data.grxx })
+        return new Promise((reslove,rejects)=>{
+            auth.getGrxx(username)
+            .then(res=>{
+                console.log(res)
+                reslove(res)
+                commit('setUser',{ user: res.data.grxx })
+            })
         })
+      
     },//获取个人信息
 
     checkLogin({commit}){

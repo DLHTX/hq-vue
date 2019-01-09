@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content" style="height: 99%;">
     <div class="second-menu">
       <ul class="second-ul">
         <li
@@ -93,7 +93,6 @@
           <el-checkbox v-model="allChecked" class="checkBox" style="margin:0 20px;color:#77a6fe!important; ">全选</el-checkbox>
           <button class="btn btn-tjcp" @click="addCp()">添加菜品</button>
           <button class="btn btn-cpdr" @click='importCp()'>菜品导入</button>
-          <button class="btn btn-tpdr">图片导入</button>
           <button class="btn btn-sc" @click="deleteCp()">删除</button>
         </div>
         <ul
@@ -194,7 +193,7 @@
     <!--section3-->
     <div class="section section3 clearfix" v-if="menuIndex===2">
         <div class="content xfjl">
-            <div class="screen-search">
+            <!-- <div class="screen-search">
                 <div class="screen">
                     <span>筛选</span>
                     <ul class="screen-ul">
@@ -204,53 +203,62 @@
                         <li><a href="#">状态</a></li>
                     </ul>
                 </div>
-            </div>
-            <div class="table-box">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>选择</th>
-                        <th>订单号</th>
-                        <th>消费用户</th>
-                        <th>手机号码</th>
-                        <th>入住时间</th>
-                        <th>离店时间</th>
-                        <th>时长</th>
-                        <th>房型</th>
-                        <th>支付方式</th>
-                        <th>消费金额</th>
-                        <th>操作员</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>1234567893</td>
-                        <td>老干妈</td>
-                        <td>18646461212</td>
-                        <td>2018-11-02</td>
-                        <td>2018-11-03</td> 
-                        <td>1晚</td>
-                        <td>标准房</td>
-                        <td>网络消费</td>
-                        <td>420</td>
-                        <td>徐老师</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>1234567893</td>
-                        <td>老干妈</td>
-                        <td>18646461212</td>
-                        <td>2018-11-02</td>
-                        <td>2018-11-03</td>
-                        <td>1晚</td>
-                        <td>标准房</td>
-                        <td>网络消费</td>
-                        <td>420</td>
-                        <td>徐老师</td>
-                    </tr>
-                    </tbody>
-                </table>
+            </div> -->
+            <div class="table-box" style="max-height: 700px;overflow-y: scroll;">
+            <el-table
+            ref="multipleTable"
+            :data="orderList"
+            tooltip-effect="dark"
+            style="width:100%;"
+            stripe
+            @selection-change="handleSelectionChange">
+                <el-table-column
+                    type="selection"
+                    width="55">
+                </el-table-column>
+                <el-table-column
+                    prop="ddbh"
+                    label="订单号"
+                    width="120"
+                    show-overflow-tooltip>
+                </el-table-column>
+                    <el-table-column
+                    prop="dcrxm"
+                    label="消费用户"
+                    width="120">
+                </el-table-column>
+                <el-table-column
+                    prop="dcrhm"
+                    label="手机号码"
+                    show-overflow-tooltip>
+                </el-table-column>
+                 <el-table-column
+                    prop='ycsj'
+                    label="用餐时间"
+                    show-overflow-tooltip>
+                </el-table-column>
+                  <el-table-column
+                    prop='ycrs'
+                    label="用餐人数"
+                    show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                    prop='mc'
+                    label="包厢名称"
+                    show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                    prop='ydsj'
+                    label="预定时间"
+                    show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column
+                    prop='ddzt'
+                    label="订单状态"
+                    show-overflow-tooltip>
+                </el-table-column>
+                
+            </el-table>
             </div>
             <div class="bottom-ope clearfix">
                 <div class="left-btn">
@@ -258,16 +266,20 @@
                     <span>全选</span>
                     <button class="btn btn-export">导出</button>
                 </div>
-                <ul class="paging">
-                    <li><a href="javascript:void(0)">2/10</a></li>
-                    <li><a href="javascript:void(0)">上一页</a></li>
-                    <li><a href="javascript:void(0)">1</a></li>
-                    <li><a href="javascript:void(0)">2</a></li>
-                    <li><a href="javascript:void(0)">3</a></li>
-                    <li><a href="javascript:void(0)">4</a></li>
-                    <li><a href="javascript:void(0)">5</a></li>
-                    <li><a href="javascript:void(0)">下5页</a></li>
-                    <li><a href="javascript:void(0)">下一页</a></li>
+                <ul
+                class="paging"
+                style="position: absolute;right: 20px;top: 50%;transform: translateY(-14px);"
+                >
+                <el-pagination
+                @size-change="handleOrderSizeChange"
+                @current-change="handleOrderCurrentChange"
+                :current-page.sync="currentOrderPage"
+                background
+                :page-size="orderRows"
+                :page-sizes="[10, 15, 20, 25]"
+                layout="sizes,total,prev, pager, next, jumper"
+                :total="orderTotal"
+                ></el-pagination>
                 </ul>
             </div>
         </div>
@@ -315,6 +327,12 @@
             <el-input v-model="form.jg"></el-input>
           </el-form-item>
 
+        <el-form-item label="菜品类别" >
+            <el-input placeholder="请输入添加菜品类别名称" v-model="cpType" clearable class="input-with-select">
+                <el-button slot="append" icon="el-icon-check" @click="saveCpType(cpType)"></el-button>
+            </el-input>
+        </el-form-item>
+
           <el-form-item label="菜品类别" prop="cplb">
             <el-select placeholder="请选择类别" v-model="form.cplb">
               <el-option
@@ -325,6 +343,9 @@
                 style="padding-left: 10px;"
               ></el-option>
             </el-select>
+            <el-tooltip class="item" effect="dark" content="删除此类别" placement="top"  v-if="form.cplb">
+                <el-button type="danger" icon="el-icon-delete" circle size="mini" v-if="form.cplb" @click='deleteType(form.cplb)'></el-button>
+            </el-tooltip>
           </el-form-item>
 
           <el-form-item label="菜品简介">
@@ -414,7 +435,7 @@
             <el-button size="small" type="primary" style="height: 33px; width: 90px;margin-bottom: 14px;">选择excel文件</el-button>
             <!-- <el-button style="margin-left: 10px;" size="small" type="success" @click="subPicExcel">上传到服务器</el-button> -->
         </el-upload>
-        <div @click='download()' v-if='active==1' style="    cursor: pointer;">下载模板</div>
+        <div @click='download()' v-if='active==1' style="cursor: pointer;">下载模板</div>
 
          <el-button style="margin-top: 40px;height: 45px;width: 90px;" @click="subPicForm" v-if='active===0'>下一步</el-button>
         <el-button style="margin-top: 40px;height: 45px;width: 90px;" @click="subPicExcel" v-if='active===1'>下一步</el-button>
@@ -458,6 +479,7 @@ export default {
   data() {
     return {
         menuName: ["菜品管理", "包厢预订", "订单管理"],
+        cpType:null,
         cuisineList: [],
         cuisineLbList: [],
         sfkyd: true,
@@ -516,8 +538,13 @@ export default {
             sfdc:true
         },
         imgList:[],
-        active: 0
-    
+        active: 0,
+        //以上是第二模块data
+        currentOrderPage: 1,
+        orderRows:10,
+        orderList:[],
+        multipleSelection:[],
+        orderTotal:null
     };
   },
   created() {
@@ -654,6 +681,9 @@ export default {
 
     changeType(index) {
       this.menuIndex = index;
+      if(index==2){
+          this.findOrder()//第三模块执行
+      }
     },//calss动态变化
 
     onGetList(treeNode = this.currentTreenode, cplbId = null, mc = null) {
@@ -837,12 +867,6 @@ export default {
         })
     },
 
-
-
-
-
-
-
     uploadExcel(excel){
         this.formexcel.append('file', excel.file);
         // form.append('list', this.imgList);
@@ -877,9 +901,85 @@ export default {
     download(){
         window.open(axios.defaults.baseURL + 'xydc/app/stct/download'+'?_token=' + getLocalStorage('token'))
         console.log(getLocalStorage('token'))
-    }
+    },
+    saveCpType(mc){
+        if(mc==null){
+            return   
+        }else{
+                cygl.saveType(mc,this.currentTreenode).then(res=>{
+                if(res.success){
+                    this.$message.success("添加菜品类型成功!");
+                    this.onGetList();
+                }
+            })
+        }
+    },
+    deleteType(id){
+        console.log(id)
+        this.$confirm('此操作将删除该类型, 是否确认?', '警告', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                cygl.deleteType(id).then(res=>{
+                    console.log(res)
+                    if(res.success){
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        this.form.cplb = null //删除完了 要去掉选择的值
+                        this.showModel=false
+                        this.onGetList()
+                    }else{
+                        this.$message.error('该菜品已被引用,无法删除!')
+                    }
+                }).catch(()=>{
+                    this.$message.error('该菜品已被引用,无法删除!')
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });          
+            });
+    },
+    //以上是section2//////////////////////////////////////////////
 
-    // 
+    findOrder(){
+        cygl.findOrder(this.currentTreenode,this.currentOrderPage,this.orderRows).then(res=>{
+            console.log(res)
+            this.orderTotal = res.data.total
+            res.data.ctydxxList.forEach((item,index)=>{
+                switch(item.ddzt){
+                    case 'YJZ':
+                        item.ddzt = '已记账'
+                        break;
+                    case 'YYD':
+                        item.ddzt = '已预订'
+                        break;
+                    case 'DZF':
+                        item.ddzt = "待支付"
+                        break;
+                    case 'YPJ':
+                        item.ddzt = '已评价'
+                        break;
+                }
+            })
+            this.orderList = res.data.ctydxxList
+
+        })
+    },
+    handleOrderSizeChange(val){
+        this.orderRows = val;
+        this.findOrder();
+    },
+    handleOrderCurrentChange(){
+        this.findOrder();
+    },
+    handleSelectionChange(val) {
+         this.multipleSelection = val;
+    }
 
   },
   computed: {},
